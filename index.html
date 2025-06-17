@@ -121,7 +121,7 @@
       pointer-events: auto;
       cursor: pointer;
     }
-    
+
     .username-input {
       margin-top: 80px;
       padding: 10px 15px;
@@ -270,8 +270,8 @@
         document.getElementById("resultText").textContent = "Введите ваш никнейм перед вращением.";
         return;
       }
-      if (!/^[a-zA-Z]+$/.test(username)) {
-        document.getElementById("resultText").textContent = "Только латинские буквы!";
+      if (!/^[a-zA-Z0-9_.@!-]+$/.test(username)) {
+        document.getElementById("resultText").textContent = "Допустимы только латинские буквы и спецсимволы: _ . @ ! -";
         return;
       }
       const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
@@ -313,7 +313,3 @@
   </script>
 </body>
 </html>
-    canvas {
-      max-width: 100%;
-      height: auto;
-    }

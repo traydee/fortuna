@@ -262,6 +262,7 @@
 
     document.getElementById("spinBtn").addEventListener("click", () => {
       const username = window.Telegram.WebApp.initDataUnsafe.user?.username || "unknown";
+      const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || "unknown";
       const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
       const spinRadians = (spinDegrees * Math.PI) / 180;
       currentRotation += spinRadians;
@@ -281,6 +282,7 @@
         const prize = prizes[prizeIndex].label;
         const payload = new URLSearchParams({
           username: username,
+          user_id: userId,
           prize: prize
         });
 

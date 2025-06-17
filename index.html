@@ -60,14 +60,28 @@
       background-color: #aaa;
       cursor: not-allowed;
     }
-    .result {
-      font-size: 20px;
-      font-weight: bold;
-      min-height: 24px;
-      background-color: #6C5CFE;
-      padding: 10px 20px;
-      border-radius: 10px;
+    .result-frame {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      color: #000;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      z-index: 1000;
       text-align: center;
+      min-width: 220px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      color: #000;
     }
     .pointer {
       position: absolute;
@@ -136,7 +150,10 @@
         <img src="Autorenew.png" id="spinBtn" class="spin-layer layer3" />
       </div>
     </div>
-    <div class="result" id="resultText"></div>
+    <div class="result-frame" id="resultText" style="display: none;">
+      <span id="closeResult" class="close-btn">✖</span>
+      <div id="resultContent"></div>
+    </div>
   </div>
 
   <script>
@@ -255,7 +272,10 @@
         const anglePerSector = (2 * Math.PI) / prizes.length;
         const pointerAngle = ((Math.PI * 1.5 - currentRotation) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
         const prizeIndex = Math.floor(pointerAngle / anglePerSector) % prizes.length;
-        document.getElementById("resultText").textContent = `Ваш приз: ${prizes[prizeIndex].label}`;
+        const resultFrame = document.getElementById("resultText");
+        const resultContent = document.getElementById("resultContent");
+        resultContent.textContent = `Ваш приз: ${prizes[prizeIndex].label}`;
+        resultFrame.style.display = "block";
 
         // --- Добавлено: отправка данных в Google Таблицу ---
         const prize = prizes[prizeIndex].label;
@@ -277,6 +297,10 @@
         });
         // --- Конец добавления ---
       }, 4200);
+    });
+
+    document.getElementById("closeResult").addEventListener("click", () => {
+      document.getElementById("resultText").style.display = "none";
     });
 
     loadImages(drawWheel);

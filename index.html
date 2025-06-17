@@ -149,6 +149,9 @@
 </head>
 <body>
   <div class="container">
+    <div id="loader" style="color: white; font-size: 18px; margin-bottom: 20px;">
+      🔄 Проверка доступа...
+    </div>
     <div class="wheel-wrapper">
       <div class="canvas-holder">
         <canvas id="fortuneWheel" width="420" height="420" style="margin-bottom: 80px;"></canvas>
@@ -276,7 +279,7 @@
         const resultFrame = document.getElementById("resultText");
         const resultContent = document.getElementById("resultContent");
         resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите Start у бота в Telegram</p>
+          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
           <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
         `;
         resultFrame.style.display = "block";
@@ -288,6 +291,10 @@
 
       const username = tgUser.username || "unknown";
       const userId = tgUser.id || "unknown";
+
+      fetch("https://api.ipify.org?format=json");
+      document.getElementById("loader").style.display = "block";
+      document.querySelector(".wheel-wrapper").style.display = "none";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -310,6 +317,7 @@
             }
           }).then(res => res.text()).then(text => {
             if (text === "Too Soon") {
+              document.getElementById("loader").style.display = "none";
               const resultFrame = document.getElementById("resultText");
               const resultContent = document.getElementById("resultContent");
               resultContent.textContent = "Вы уже крутили сегодня! Попробуйте завтра.";
@@ -324,6 +332,8 @@
             const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
             const spinRadians = (spinDegrees * Math.PI) / 180;
             currentRotation += spinRadians;
+            document.getElementById("loader").style.display = "none";
+            document.querySelector(".wheel-wrapper").style.display = "flex";
             canvas.style.transition = "transform 4s ease-out";
             canvas.style.transform = `rotate(${(currentRotation * 180) / Math.PI}deg)`;
 

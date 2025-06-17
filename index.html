@@ -365,8 +365,8 @@
     window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("loader").style.display = "flex";
-      const username = "unknown";
-      const userId = "unknown";
+      const username = tgUser.username || "unknown";
+      const userId = tgUser.id || "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())

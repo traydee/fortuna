@@ -149,9 +149,6 @@
 </head>
 <body>
   <div class="container">
-    <div id="loader" style="color: white; font-size: 18px; margin-bottom: 20px;">
-      🔄 Проверка доступа...
-    </div>
     <div class="wheel-wrapper">
       <div class="canvas-holder">
         <canvas id="fortuneWheel" width="420" height="420" style="margin-bottom: 80px;"></canvas>
@@ -292,10 +289,6 @@
       const username = tgUser.username || "unknown";
       const userId = tgUser.id || "unknown";
 
-      fetch("https://api.ipify.org?format=json");
-      document.getElementById("loader").style.display = "block";
-      document.querySelector(".wheel-wrapper").style.display = "none";
-
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
         .then(data => {
@@ -317,11 +310,13 @@
             }
           }).then(res => res.text()).then(text => {
             if (text === "Too Soon") {
-              document.getElementById("loader").style.display = "none";
               const resultFrame = document.getElementById("resultText");
               const resultContent = document.getElementById("resultContent");
               resultContent.textContent = "Вы уже крутили сегодня! Попробуйте завтра.";
               resultFrame.style.display = "block";
+              setTimeout(() => {
+                resultFrame.style.display = "none";
+              }, 7000);
               return;
             }
 
@@ -329,7 +324,6 @@
             const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
             const spinRadians = (spinDegrees * Math.PI) / 180;
             currentRotation += spinRadians;
-            document.querySelector(".wheel-wrapper").style.display = "flex";
             canvas.style.transition = "transform 4s ease-out";
             canvas.style.transform = `rotate(${(currentRotation * 180) / Math.PI}deg)`;
 
@@ -370,10 +364,6 @@
     });
 
     loadImages(drawWheel);
-
-    window.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("spinBtn").click();
-    });
   </script>
 </body>
 </html>

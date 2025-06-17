@@ -292,26 +292,30 @@
         resultContent.textContent = `Ваш приз: ${prizes[prizeIndex].label}`;
         resultFrame.style.display = "block";
 
-        // --- Добавлено: отправка данных в Google Таблицу ---
-        const prize = prizes[prizeIndex].label;
-        const payload = new URLSearchParams({
-          username: username,
-          user_id: userId,
-          prize: prize
-        });
+        fetch("https://api.ipify.org?format=json")
+          .then(res => res.json())
+          .then(data => {
+            const ip = data.ip;
+            const prize = prizes[prizeIndex].label;
+            const payload = new URLSearchParams({
+              username: username,
+              user_id: userId,
+              prize: prize,
+              ip: ip
+            });
 
-        fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
-          method: "POST",
-          body: payload.toString(),
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          }
-        }).then(res => {
-          if (!res.ok) throw new Error("Ошибка при отправке в таблицу");
-        }).catch(err => {
-          console.error("❌ Не удалось записать в Google Таблицу:", err);
-        });
-        // --- Конец добавления ---
+            fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
+              method: "POST",
+              body: payload.toString(),
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              }
+            }).then(res => {
+              if (!res.ok) throw new Error("Ошибка при отправке в таблицу");
+            }).catch(err => {
+              console.error("❌ Не удалось записать в Google Таблицу:", err);
+            });
+          });
       }, 4200);
     });
 

@@ -329,7 +329,6 @@
             const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
             const spinRadians = (spinDegrees * Math.PI) / 180;
             currentRotation += spinRadians;
-            document.getElementById("loader").style.display = "none";
             document.querySelector(".wheel-wrapper").style.display = "flex";
             canvas.style.transition = "transform 4s ease-out";
             canvas.style.transform = `rotate(${(currentRotation * 180) / Math.PI}deg)`;

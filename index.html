@@ -121,26 +121,6 @@
       pointer-events: auto;
       cursor: pointer;
     }
-
-    .username-input {
-      margin-top: 80px;
-      padding: 10px 15px;
-      font-size: 16px;
-      border: 2px solid white;
-      border-radius: 10px;
-      background-color: transparent;
-      color: white;
-      text-align: center;
-      outline: none;
-      width: 80%;
-      max-width: 300px;
-      z-index: 11;
-      position: relative;
-    }
-
-    .username-input::placeholder {
-      color: #ddd;
-    }
   </style>
 </head>
 <body>
@@ -156,7 +136,6 @@
         <img src="Autorenew.png" id="spinBtn" class="spin-layer layer3" />
       </div>
     </div>
-    <input type="text" id="usernameInput" placeholder="Введите ваш никнейм" class="username-input" />
     <div class="result" id="resultText"></div>
   </div>
 
@@ -265,15 +244,7 @@
     let currentRotation = 0;
 
     document.getElementById("spinBtn").addEventListener("click", () => {
-      const username = document.getElementById("usernameInput").value.trim();
-      if (!username) {
-        document.getElementById("resultText").textContent = "Введите ваш никнейм перед вращением.";
-        return;
-      }
-      if (!/^[a-zA-Z0-9_.@!-]+$/.test(username)) {
-        document.getElementById("resultText").textContent = "Допустимы только латинские буквы и спецсимволы: _ . @ ! -";
-        return;
-      }
+      const username = window.Telegram.WebApp.initDataUnsafe.user?.username || "unknown";
       const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
       const spinRadians = (spinDegrees * Math.PI) / 180;
       currentRotation += spinRadians;
@@ -285,7 +256,6 @@
         const pointerAngle = ((Math.PI * 1.5 - currentRotation) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
         const prizeIndex = Math.floor(pointerAngle / anglePerSector) % prizes.length;
         document.getElementById("resultText").textContent = `Ваш приз: ${prizes[prizeIndex].label}`;
-        document.getElementById("usernameInput").value = "";
 
         // --- Добавлено: отправка данных в Google Таблицу ---
         const prize = prizes[prizeIndex].label;

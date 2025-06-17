@@ -80,7 +80,7 @@
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      z-index: 1000;
+      z-index: 9999;
       text-align: center;
       min-width: 220px;
     }
@@ -145,24 +145,42 @@
       pointer-events: auto;
       cursor: pointer;
     }
+    .spinner {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #6C5CFE;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="wheel-wrapper">
-      <div class="canvas-holder">
-        <canvas id="fortuneWheel" width="420" height="420" style="margin-bottom: 80px;"></canvas>
-      </div>
-      <div class="pointer"></div>
-      <div class="spin-overlay">
-        <img src="Ellipse 1.png" class="spin-layer layer1" />
-        <img src="Ellipse 2.png" class="spin-layer layer2" />
-        <img src="Autorenew.png" id="spinBtn" class="spin-layer layer3" />
-      </div>
+    <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 100vh;">
+      <div class="spinner"></div>
     </div>
-    <div class="result-frame" id="resultText" style="display: none;">
-      <span id="closeResult" class="close-btn">✖</span>
-      <div id="resultContent"></div>
+    <div id="mainContent" style="display: none;">
+      <div class="wheel-wrapper">
+        <div class="canvas-holder">
+          <canvas id="fortuneWheel" width="420" height="420" style="margin-bottom: 80px;"></canvas>
+        </div>
+        <div class="pointer"></div>
+        <div class="spin-overlay">
+          <img src="Ellipse 1.png" class="spin-layer layer1" />
+          <img src="Ellipse 2.png" class="spin-layer layer2" />
+          <img src="Autorenew.png" id="spinBtn" class="spin-layer layer3" />
+        </div>
+      </div>
+      <div class="result-frame" id="resultText" style="display: none;">
+        <span id="closeResult" class="close-btn">✖️</span>
+        <div id="resultContent"></div>
+      </div>
     </div>
   </div>
 
@@ -288,74 +306,50 @@
 
       const username = tgUser.username || "unknown";
       const userId = tgUser.id || "unknown";
+      // const username = "unknown";
+      // const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
         .then(data => {
           const ip = data.ip;
+          // Если OK — тогда крутим
+          const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
+          const spinRadians = (spinDegrees * Math.PI) / 180;
+          currentRotation += spinRadians;
+          canvas.style.transition = "transform 4s ease-out";
+          canvas.style.transform = `rotate(${(currentRotation * 180) / Math.PI}deg)`;
 
-          // сначала проверка доступа
-          const payload = new URLSearchParams({
-            username: username,
-            user_id: userId,
-            prize: "check", // временное значение
-            ip: ip
-          });
+          setTimeout(() => {
+            const anglePerSector = (2 * Math.PI) / prizes.length;
+            const pointerAngle = ((Math.PI * 1.5 - currentRotation) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            const prizeIndex = Math.floor(pointerAngle / anglePerSector) % prizes.length;
 
-          return fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
-            method: "POST",
-            body: payload.toString(),
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            }
-          }).then(res => res.text()).then(text => {
-            if (text === "Too Soon") {
-              const resultFrame = document.getElementById("resultText");
-              const resultContent = document.getElementById("resultContent");
-              resultContent.textContent = "Вы уже крутили сегодня! Попробуйте завтра.";
-              resultFrame.style.display = "block";
-              setTimeout(() => {
-                resultFrame.style.display = "none";
-              }, 7000);
-              return;
-            }
+            const resultFrame = document.getElementById("resultText");
+            const resultContent = document.getElementById("resultContent");
+            resultContent.textContent = `Ваш приз: ${prizes[prizeIndex].label}`;
+            resultFrame.style.display = "block";
 
-            // Если OK — тогда крутим
-            const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
-            const spinRadians = (spinDegrees * Math.PI) / 180;
-            currentRotation += spinRadians;
-            canvas.style.transition = "transform 4s ease-out";
-            canvas.style.transform = `rotate(${(currentRotation * 180) / Math.PI}deg)`;
+            document.getElementById("spinBtn").style.pointerEvents = "none";
 
-            setTimeout(() => {
-              const anglePerSector = (2 * Math.PI) / prizes.length;
-              const pointerAngle = ((Math.PI * 1.5 - currentRotation) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-              const prizeIndex = Math.floor(pointerAngle / anglePerSector) % prizes.length;
+            // уже настоящее сохранение
+            const finalPayload = new URLSearchParams({
+              username: username,
+              user_id: userId,
+              prize: prizes[prizeIndex].label,
+              ip: ip
+            });
 
-              const resultFrame = document.getElementById("resultText");
-              const resultContent = document.getElementById("resultContent");
-              resultContent.textContent = `Ваш приз: ${prizes[prizeIndex].label}`;
-              resultFrame.style.display = "block";
-
-              // уже настоящее сохранение
-              const finalPayload = new URLSearchParams({
-                username: username,
-                user_id: userId,
-                prize: prizes[prizeIndex].label,
-                ip: ip
-              });
-
-              fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
-                method: "POST",
-                body: finalPayload.toString(),
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded"
-                }
-              }).catch(err => {
-                console.error("❌ Не удалось записать приз:", err);
-              });
-            }, 4200);
-          });
+            fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
+              method: "POST",
+              body: finalPayload.toString(),
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              }
+            }).catch(err => {
+              console.error("❌ Не удалось записать приз:", err);не
+            });
+          }, 4200);
         });
     });
 
@@ -363,11 +357,61 @@
       document.getElementById("resultText").style.display = "none";
     });
 
+
+
     loadImages(drawWheel);
 
 
     window.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("spinBtn").click();
+      document.getElementById("mainContent").style.display = "none";
+      document.getElementById("loader").style.display = "flex";
+      const username = "unknown";
+      const userId = "unknown";
+
+      fetch("https://api.ipify.org?format=json")
+        .then(res => res.json())
+        .then(data => {
+          const ip = data.ip;
+
+          let payload = new URLSearchParams({
+            username: username,
+            user_id: userId,
+            prize: "check",
+            ip: ip
+          });
+
+          fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
+            method: "POST",
+            body: payload.toString(),
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          }).then(res => res.text()).then(text => {
+            if (text === "Too Soon") {
+              const loader = document.getElementById("loader");
+              const mainContent = document.getElementById("mainContent");
+              const resultFrame = document.getElementById("resultText");
+              const resultContent = document.getElementById("resultContent");
+
+              // loader.style.display = "none";
+              mainContent.style.display = "none";
+
+            setTimeout(() => {
+              loader.innerHTML = `
+                <div style="font-size: 18px; margin: 0; padding: 20px 24px; color: #fff; text-align: center;">
+                  Вы уже крутили сегодня!<br>Попробуйте завтра.
+                </div>
+              `;
+            }, 10);
+
+              // Блокируем кнопку
+              document.getElementById("spinBtn").style.pointerEvents = "none";
+            } else {
+              document.getElementById("loader").style.display = "none";
+              document.getElementById("mainContent").style.display = "block";
+            }
+          });
+        });
     });
   </script>
 </body>

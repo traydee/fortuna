@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Колесо фортуны</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #6C5CFE;
+      color: white;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .wheel-wrapper {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .canvas-holder {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+    .wheel img {
+      width: 100%;
+      border-radius: 50%;
+      border: 4px solid white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .spin-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      background-color: #ffcc00;
+      color: #333;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .spin-btn:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+    .result {
+      font-size: 20px;
+      font-weight: bold;
+      min-height: 24px;
+      background-color: #6C5CFE;
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .pointer {
+      position: absolute;
+      top: -90px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 20px solid #fff;
+      z-index: 10;
+    }
+    .center-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 80px;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .spin-overlay {
+      position: absolute;
+      top: 46.5%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.56);
+      width: 80px;
+      height: 80px;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .spin-layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .spin-layer.layer2 {
+      transform: scale(0.85);
+    }
+
+    .spin-layer.layer3 {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .username-input {
+      margin-top: 80px;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: 2px solid white;
+      border-radius: 10px;
+      background-color: transparent;
+      color: white;
+      text-align: center;
+      outline: none;
+      width: 80%;
+      max-width: 300px;
+      z-index: 11;
+      position: relative;
+    }
+
+    .username-input::placeholder {
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="wheel-wrapper">
+      <div class="canvas-holder">
+        <canvas id="fortuneWheel" width="420" height="420" style="margin-bottom: 20px;"></canvas>
+      </div>
+      <div class="pointer"></div>
+      <div class="spin-overlay">
+        <img src="Ellipse 1.png" class="spin-layer layer1" />
+        <img src="Ellipse 2.png" class="spin-layer layer2" />
+        <img src="Autorenew.png" id="spinBtn" class="spin-layer layer3" />
+      </div>
+    </div>
+    <input type="text" id="usernameInput" placeholder="Введите ваш никнейм" class="username-input" />
+    <div class="result" id="resultText"></div>
+  </div>
+
+  <script>
+    const prizes = [
+      { label: "Chaturbate", image: "2.png" },
+      { label: "🎁", image: "1.png" },
+      { label: "Stripchat", image: "3.png" },
+      { label: "Chaturbate", image: "2.png" },
+      { label: "🎁", image: "1.png" },
+      { label: "Stripchat", image: "3.png" },
+      { label: "Chaturbate", image: "2.png" },
+      { label: "Stripchat", image: "3.png" },
+    ];
+
+    const canvas = document.getElementById("fortuneWheel");
+    const ctx = canvas.getContext("2d");
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 200;
+
+    const loadedImages = {};
+
+    function loadImages(callback) {
+      let loadedCount = 0;
+      prizes.forEach((p, i) => {
+        const img = new Image();
+        img.src = p.image;
+        img.onload = () => {
+          loadedImages[i] = img;
+          loadedCount++;
+          if (loadedCount === prizes.length) callback();
+        };
+        img.onerror = () => {
+          loadedImages[i] = null;
+          loadedCount++;
+          if (loadedCount === prizes.length) callback();
+        };
+      });
+    }
+
+    function drawWheel() {
+      const anglePerSector = (2 * Math.PI) / prizes.length;
+      for (let i = 0; i < prizes.length; i++) {
+        const startAngle = i * anglePerSector;
+        const endAngle = startAngle + anglePerSector;
+
+        // Сектор
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        let gradient;
+        if (i % 2 === 0) {
+          // Сектор с radial gradient
+          gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+          gradient.addColorStop(0, "#0C1FD4");
+          gradient.addColorStop(0.8269, "#5E6CF9");
+          gradient.addColorStop(1, "#808CFF");
+        } else {
+          // Сектор с linear gradient
+          gradient = ctx.createLinearGradient(
+            centerX + Math.cos(startAngle) * radius,
+            centerY + Math.sin(startAngle) * radius,
+            centerX + Math.cos(endAngle) * radius,
+            centerY + Math.sin(endAngle) * radius
+          );
+          gradient.addColorStop(0.5, "#B168FF");
+          gradient.addColorStop(0.8871, "#6C5CFE");
+        }
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Изображение
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(startAngle + anglePerSector / 2);
+        
+        const img = loadedImages[i];
+        if (img) {
+            const maxWidth = 100;
+            const scale = maxWidth / img.width;
+            const finalWidth = img.width * scale;
+            const finalHeight = img.height * scale;
+
+            // Увеличение масштаба на 15%
+            const zoom = 1.15; // увеличить на 15%
+            const extraZoom = prizes[i].label === "🎁" ? 0.5 : 1;
+            ctx.scale(zoom * extraZoom, zoom * extraZoom);
+
+            const offsetX = prizes[i].label === "🎁" ? radius * 1.1 : radius * 0.5;
+            ctx.translate(offsetX, 0); // немного правее центра сектора
+            ctx.drawImage(img, -finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);
+        } else {
+          ctx.fillStyle = "white";
+          ctx.font = "16px sans-serif";
+          ctx.textAlign = "right";
+          ctx.fillText(prizes[i].label, radius - 10, 5);
+        }
+        ctx.restore();
+      }
+    }
+
+    let currentRotation = 0;
+
+    document.getElementById("spinBtn").addEventListener("click", () => {
+      const username = document.getElementById("usernameInput").value.trim();
+      if (!username) {
+        document.getElementById("resultText").textContent = "Введите ваш никнейм перед вращением.";
+        return;
+      }
+      const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
+      const spinRadians = (spinDegrees * Math.PI) / 180;
+      currentRotation += spinRadians;
+      canvas.style.transition = "transform 4s ease-out";
+      canvas.style.transform = `rotate(${(currentRotation * 180) / Math.PI}deg)`;
+
+      setTimeout(() => {
+        const anglePerSector = (2 * Math.PI) / prizes.length;
+        const pointerAngle = ((Math.PI * 1.5 - currentRotation) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+        const prizeIndex = Math.floor(pointerAngle / anglePerSector) % prizes.length;
+        document.getElementById("resultText").textContent = `Ваш приз: ${prizes[prizeIndex].label}`;
+        document.getElementById("usernameInput").value = "";
+      }, 4200);
+    });
+
+    loadImages(drawWheel);
+  </script>
+</body>
+</html>

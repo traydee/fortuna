@@ -294,6 +294,14 @@
         .then(data => {
           const ip = data.ip;
 
+          // сначала проверка доступа
+          const payload = new URLSearchParams({
+            username: username,
+            user_id: userId,
+            prize: "check", // временное значение
+            ip: ip
+          });
+
           return fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
             method: "POST",
             body: payload.toString(),

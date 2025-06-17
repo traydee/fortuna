@@ -294,6 +294,7 @@
 
       fetch("https://api.ipify.org?format=json");
       document.getElementById("loader").style.display = "block";
+      document.querySelector(".wheel-wrapper").style.display = "none";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -332,6 +333,7 @@
             const spinRadians = (spinDegrees * Math.PI) / 180;
             currentRotation += spinRadians;
             document.getElementById("loader").style.display = "none";
+            document.querySelector(".wheel-wrapper").style.display = "flex";
             canvas.style.transition = "transform 4s ease-out";
             canvas.style.transform = `rotate(${(currentRotation * 180) / Math.PI}deg)`;
 
@@ -372,6 +374,10 @@
     });
 
     loadImages(drawWheel);
+
+    window.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("spinBtn").click();
+    });
   </script>
 </body>
 </html>

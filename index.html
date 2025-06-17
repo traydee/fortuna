@@ -264,6 +264,17 @@
     let currentRotation = 0;
 
     document.getElementById("spinBtn").addEventListener("click", () => {
+      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      if (!tgUser || !tgUser.id) {
+        const resultFrame = document.getElementById("resultText");
+        const resultContent = document.getElementById("resultContent");
+        resultContent.textContent = "Пожалуйста, сначала нажмите Start у бота в Telegram";
+        resultFrame.style.display = "block";
+        setTimeout(() => {
+          resultFrame.style.display = "none";
+        }, 5000);
+        return;
+      }
       const username = window.Telegram.WebApp.initDataUnsafe.user?.username || "unknown";
       const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || "unknown";
       const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);

@@ -285,57 +285,78 @@
         }, 10000);
         return;
       }
-      const username = window.Telegram.WebApp.initDataUnsafe.user?.username || "unknown";
-      const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || "unknown";
-      const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
-      const spinRadians = (spinDegrees * Math.PI) / 180;
-      currentRotation += spinRadians;
-      canvas.style.transition = "transform 4s ease-out";
-      canvas.style.transform = `rotate(${(currentRotation * 180) / Math.PI}deg)`;
 
-      setTimeout(() => {
-        const anglePerSector = (2 * Math.PI) / prizes.length;
-        const pointerAngle = ((Math.PI * 1.5 - currentRotation) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-        const prizeIndex = Math.floor(pointerAngle / anglePerSector) % prizes.length;
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.textContent = `Ваш приз: ${prizes[prizeIndex].label}`;
-        resultFrame.style.display = "block";
+      const username = tgUser.username || "unknown";
+      const userId = tgUser.id || "unknown";
 
-        fetch("https://api.ipify.org?format=json")
-          .then(res => res.json())
-          .then(data => {
-            const ip = data.ip;
-            const prize = prizes[prizeIndex].label;
-            const payload = new URLSearchParams({
-              username: username,
-              user_id: userId,
-              prize: prize,
-              ip: ip
-            });
+      fetch("https://api.ipify.org?format=json")
+        .then(res => res.json())
+        .then(data => {
+          const ip = data.ip;
 
-            fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
-              method: "POST",
-              body: payload.toString(),
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-              }
-            })
-            .then(res => res.text())
-            .then(text => {
-              if (text === "Too Soon") {
-                resultContent.textContent = "Вы уже крутили сегодня! Попробуйте завтра.";
-                resultFrame.style.display = "block";
-                setTimeout(() => {
-                  resultFrame.style.display = "none";
-                }, 7000);
-              }
-            })
-            .catch(err => {
-              console.error("❌ Не удалось записать в Google Таблицу:", err);
-            });
+          // сначала проверка доступа
+          const payload = new URLSearchParams({
+            username: username,
+            user_id: userId,
+            prize: "check", // временное значение
+            ip: ip
           });
-      }, 4200);
+
+          return fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
+            method: "POST",
+            body: payload.toString(),
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          }).then(res => res.text()).then(text => {
+            if (text === "Too Soon") {
+              const resultFrame = document.getElementById("resultText");
+              const resultContent = document.getElementById("resultContent");
+              resultContent.textContent = "Вы уже крутили сегодня! Попробуйте завтра.";
+              resultFrame.style.display = "block";
+              setTimeout(() => {
+                resultFrame.style.display = "none";
+              }, 7000);
+              return;
+            }
+
+            // Если OK — тогда крутим
+            const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
+            const spinRadians = (spinDegrees * Math.PI) / 180;
+            currentRotation += spinRadians;
+            canvas.style.transition = "transform 4s ease-out";
+            canvas.style.transform = `rotate(${(currentRotation * 180) / Math.PI}deg)`;
+
+            setTimeout(() => {
+              const anglePerSector = (2 * Math.PI) / prizes.length;
+              const pointerAngle = ((Math.PI * 1.5 - currentRotation) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+              const prizeIndex = Math.floor(pointerAngle / anglePerSector) % prizes.length;
+
+              const resultFrame = document.getElementById("resultText");
+              const resultContent = document.getElementById("resultContent");
+              resultContent.textContent = `Ваш приз: ${prizes[prizeIndex].label}`;
+              resultFrame.style.display = "block";
+
+              // уже настоящее сохранение
+              const finalPayload = new URLSearchParams({
+                username: username,
+                user_id: userId,
+                prize: prizes[prizeIndex].label,
+                ip: ip
+              });
+
+              fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
+                method: "POST",
+                body: finalPayload.toString(),
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                }
+              }).catch(err => {
+                console.error("❌ Не удалось записать приз:", err);
+              });
+            }, 4200);
+          });
+        });
     });
 
     document.getElementById("closeResult").addEventListener("click", () => {

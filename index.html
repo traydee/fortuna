@@ -186,14 +186,18 @@
 
   <script>
     const prizes = [
-      { label: "Chaturbate", image: "2.png" },
-      { label: "🎁", image: "1.png" },
       { label: "Stripchat", image: "3.png" },
+      { label: "Joke", image: "1.png" },
+      { label: "Joke", image: "1.png" },
       { label: "Chaturbate", image: "2.png" },
-      { label: "🎁", image: "1.png" },
+      { label: "Joke", image: "1.png" },
+      { label: "Joke", image: "1.png" },
       { label: "Stripchat", image: "3.png" },
+      { label: "Joke", image: "1.png" },
+      { label: "Joke", image: "1.png" },
       { label: "Chaturbate", image: "2.png" },
-      { label: "Stripchat", image: "3.png" },
+      { label: "Joke", image: "1.png" },
+      { label: "Joke", image: "1.png" }
     ];
 
     const canvas = document.getElementById("fortuneWheel");
@@ -269,12 +273,25 @@
             const finalHeight = img.height * scale;
 
             // Увеличение масштаба на 15%
-            const zoom = 1.15; // увеличить на 15%
-            const extraZoom = prizes[i].label === "🎁" ? 0.5 : 1;
-            ctx.scale(zoom * extraZoom, zoom * extraZoom);
+            let zoom = 1.15; // базовое увеличение
 
-            const offsetX = prizes[i].label === "🎁" ? radius * 1.1 : radius * 0.5;
-            ctx.translate(offsetX, 0); // немного правее центра сектора
+            if (prizes[i].label === "Joke") {
+              zoom *= 0.5;
+            } else if (prizes[i].label === "Stripchat") {
+              zoom *= 1;  // увеличим Stripchat дополнительно на 30%
+            } else if (prizes[i].label === "Chaturbate") {
+              zoom *= 0.7;  // можно чуть подправить и для других, если нужно
+            }
+            ctx.scale(zoom, zoom);
+            let offsetX = 0;
+            if (prizes[i].label === "Joke") {
+              offsetX = radius * 1.3;
+            } else if (prizes[i].label === "Stripchat") {
+              offsetX = radius * 0.5;  // чуть дальше
+            } else if (prizes[i].label === "Chaturbate") {
+              offsetX = radius * 0.8; // чуть ближе к центру
+            }
+            ctx.translate(offsetX, 0);
             ctx.drawImage(img, -finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);
         } else {
           ctx.fillStyle = "white";
@@ -314,9 +331,30 @@
         .then(data => {
           const ip = data.ip;
           // Если OK — тогда крутим
-          const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
-          const spinRadians = (spinDegrees * Math.PI) / 180;
+          const anglePerSector = (2 * Math.PI) / prizes.length;
+
+          // Выбираем категорию с заданной вероятностью
+          const rand = Math.random();
+          let targetLabel = "";
+          if (rand < 0.7) targetLabel = "Joke";
+          else if (rand < 0.85) targetLabel = "Stripchat";
+          else targetLabel = "Chaturbate";
+
+          // Собираем индексы всех секторов с нужной категорией
+          const matchingIndexes = prizes
+            .map((p, i) => (p.label === targetLabel ? i : -1))
+            .filter(i => i !== -1);
+
+          // Случайно выбираем один из подходящих индексов
+          const targetIndex = matchingIndexes[Math.floor(Math.random() * matchingIndexes.length)];
+
+          // Вычисляем нужный угол
+          const targetAngle = 1.5 * Math.PI - (targetIndex + 0.5) * anglePerSector;
+
+          // Добавляем обороты + точный угол
+          const spinRadians = 2 * Math.PI * 5 + ((targetAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
           currentRotation += spinRadians;
+
           canvas.style.transition = "transform 4s ease-out";
           canvas.style.transform = `rotate(${(currentRotation * 180) / Math.PI}deg)`;
 
@@ -324,31 +362,85 @@
             const anglePerSector = (2 * Math.PI) / prizes.length;
             const pointerAngle = ((Math.PI * 1.5 - currentRotation) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             const prizeIndex = Math.floor(pointerAngle / anglePerSector) % prizes.length;
+            const prizeLabel = prizes[prizeIndex].label;
 
             const resultFrame = document.getElementById("resultText");
             const resultContent = document.getElementById("resultContent");
-            resultContent.textContent = `Ваш приз: ${prizes[prizeIndex].label}`;
-            resultFrame.style.display = "block";
 
-            document.getElementById("spinBtn").style.pointerEvents = "none";
+            fetch("fortuna.json")
+              .then(res => res.json())
+              .then(data => {
+                let finalText = "";
 
-            // уже настоящее сохранение
-            const finalPayload = new URLSearchParams({
-              username: username,
-              user_id: userId,
-              prize: prizes[prizeIndex].label,
-              ip: ip
-            });
+                if (prizeLabel === "Joke") {
+                  const jokes = data.joke;
+                  finalText = jokes[Math.floor(Math.random() * jokes.length)];
+                } else if (prizeLabel === "Stripchat" || prizeLabel === "Chaturbate") {
+                  const key = prizeLabel.toLowerCase(); // "stripchat" или "chaturbate"
+                  const source = data[key];
+                  const prizeRand = Math.random();
+                  const pool = prizeRand < 0.9 ? source.prize : source.superprize;
+                  const selected = pool[Math.floor(Math.random() * pool.length)];
+                  finalText = `${prizeLabel}: ${selected}`;
 
-            fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
-              method: "POST",
-              body: finalPayload.toString(),
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-              }
-            }).catch(err => {
-              console.error("❌ Не удалось записать приз:", err);не
-            });
+                  // --- Конфетти для Stripchat и Chaturbate ---
+                  const confettiCanvas = document.createElement("canvas");
+                  confettiCanvas.style.position = "fixed";
+                  confettiCanvas.style.top = 0;
+                  confettiCanvas.style.left = 0;
+                  confettiCanvas.style.width = "100vw";
+                  confettiCanvas.style.height = "100vh";
+                  confettiCanvas.style.pointerEvents = "none";
+                  confettiCanvas.style.zIndex = 99999;
+                  document.body.appendChild(confettiCanvas);
+
+                  const script = document.createElement("script");
+                  script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+                  script.onload = () => {
+                    const myConfetti = window.confetti.create(confettiCanvas, { resize: true });
+                    myConfetti({
+                      particleCount: 200,
+                      spread: 100,
+                      origin: { y: 0.6 },
+                      startVelocity: 30,
+                      gravity: 0.8,
+                      ticks: 200
+                    });
+
+                    setTimeout(() => {
+                      confettiCanvas.style.pointerEvents = "none";
+                      confettiCanvas.style.display = "none";
+                      confettiCanvas.remove();
+                    }, 6000);
+                  };
+                  document.body.appendChild(script);
+                  // --- конец конфетти ---
+                } else {
+                  finalText = prizeLabel;
+                }
+
+                resultContent.textContent = `Ваш приз: ${finalText}`;
+                resultFrame.style.display = "block";
+
+                document.getElementById("spinBtn").style.pointerEvents = "none";
+
+                const finalPayload = new URLSearchParams({
+                  username: username,
+                  user_id: userId,
+                  prize: finalText,
+                  ip: ip
+                });
+
+                fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
+                  method: "POST",
+                  body: finalPayload.toString(),
+                  headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                  }
+                }).catch(err => {
+                  console.error("❌ Не удалось записать приз:", err);
+                });
+              });
           }, 4200);
         });
     });
@@ -365,23 +457,26 @@
     window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("loader").style.display = "flex";
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
+
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())

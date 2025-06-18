@@ -333,12 +333,14 @@
           // Если OK — тогда крутим
           const anglePerSector = (2 * Math.PI) / prizes.length;
 
-          // Выбираем категорию с заданной вероятностью
-          const rand = Math.random();
-          let targetLabel = "";
-          if (rand < 0.7) targetLabel = "Joke";
-          else if (rand < 0.85) targetLabel = "Stripchat";
-          else targetLabel = "Chaturbate";
+      // 🎯 Теория вероятностей выпадения категорий:
+      // 70% — Joke, 15% — Stripchat, 15% — Chaturbate
+      // Выбираем категорию с заданной вероятностью
+      const rand = Math.random();
+      let targetLabel = "";
+      if (rand < 0.7) targetLabel = "Joke";
+      else if (rand < 0.85) targetLabel = "Stripchat";
+      else targetLabel = "Chaturbate";
 
           // Собираем индексы всех секторов с нужной категорией
           const matchingIndexes = prizes
@@ -457,26 +459,26 @@
     window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("loader").style.display = "flex";
-      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      // if (!tgUser || !tgUser.id) {
-      //   const resultFrame = document.getElementById("resultText");
-      //   const resultContent = document.getElementById("resultContent");
-      //   resultContent.innerHTML = `
-      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-      //     <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-      //   `;
-      //   resultFrame.style.display = "block";
-      //   setTimeout(() => {
-      //     resultFrame.style.display = "none";
-      //   }, 10000);
-      //   return;
-      // }
+      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      if (!tgUser || !tgUser.id) {
+        const resultFrame = document.getElementById("resultText");
+        const resultContent = document.getElementById("resultContent");
+        resultContent.innerHTML = `
+          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+          <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+        `;
+        resultFrame.style.display = "block";
+        setTimeout(() => {
+          resultFrame.style.display = "none";
+        }, 10000);
+        return;
+      }
 
-      // const username = tgUser.username || "unknown";
-      // const userId = tgUser.id || "unknown";
+      const username = tgUser.username || "unknown";
+      const userId = tgUser.id || "unknown";
 
-      const username = "unknown";
-      const userId = "unknown";
+      // const username = "unknown";
+      // const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())

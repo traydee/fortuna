@@ -306,25 +306,25 @@
     let currentRotation = 0;
 
     document.getElementById("spinBtn").addEventListener("click", () => {
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
-      // const username = "unknown";
-      // const userId = "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -427,13 +427,14 @@
                 document.getElementById("spinBtn").style.pointerEvents = "none";
 
                 const finalPayload = new URLSearchParams({
+                  action: "savePrize",
                   username: username,
                   user_id: userId,
                   prize: finalText,
                   ip: ip
                 });
 
-                fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
+                fetch("https://script.google.com/macros/s/AKfycbxplvQPVt_IIyJXPEoPNlS1SXBNuHmQOvr5xwUqy9zJEX0xtyF2RvsZxRjCK94evoAlvw/exec", {
                   method: "POST",
                   body: finalPayload.toString(),
                   headers: {
@@ -459,26 +460,26 @@
     window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("loader").style.display = "flex";
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
 
-      // const username = "unknown";
-      // const userId = "unknown";
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -486,13 +487,14 @@
           const ip = data.ip;
 
           let payload = new URLSearchParams({
+            action: "savePrize",
             username: username,
             user_id: userId,
             prize: "check",
             ip: ip
           });
 
-          fetch("https://script.google.com/macros/s/AKfycbykcSNv2LjxX09QqmEgivb6JTtJk03LYvevdblaVKUV6iy3qpD5AN5Knev5Oq9IUgGHRA/exec", {
+          fetch("https://script.google.com/macros/s/AKfycbxplvQPVt_IIyJXPEoPNlS1SXBNuHmQOvr5xwUqy9zJEX0xtyF2RvsZxRjCK94evoAlvw/exec", {
             method: "POST",
             body: payload.toString(),
             headers: {

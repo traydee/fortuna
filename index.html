@@ -498,6 +498,9 @@
 
 
     window.addEventListener("DOMContentLoaded", () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.expand();
+      }
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("loader").style.display = "flex";
       const tgUser = window.Telegram.WebApp.initDataUnsafe.user;

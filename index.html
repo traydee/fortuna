@@ -424,25 +424,65 @@
                 resultContent.textContent = `Ваш приз: ${finalText}`;
                 resultFrame.style.display = "block";
 
+                if (window.wasSpinGrantedByFreespin) {
+                  // Сначала списываем фриспин
+                  fetch("https://script.google.com/macros/s/AKfycbxplvQPVt_IIyJXPEoPNlS1SXBNuHmQOvr5xwUqy9zJEX0xtyF2RvsZxRjCK94evoAlvw/exec", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                      action: "minusValue",
+                      user_id: userId
+                    })
+                  })
+                  .then(res => res.text())
+                  .then(resultMinus => {
+                    console.log("Фриспин списан:", resultMinus);
+
+                    // Затем записываем приз, если списание прошло
+                    fetch("https://script.google.com/macros/s/AKfycbxplvQPVt_IIyJXPEoPNlS1SXBNuHmQOvr5xwUqy9zJEX0xtyF2RvsZxRjCK94evoAlvw/exec", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                      },
+                      body: new URLSearchParams({
+                        action: "addValue",
+                        username: username,
+                        user_id: userId,
+                        prize: finalText,
+                        ip: ip,
+                        friends: resultMinus
+                      })
+                    })
+                    .then(res => res.text())
+                    .then(resultAdd => console.log("Приз записан:", resultAdd))
+                    .catch(err => console.error("Ошибка при записи приза:", err));
+                  })
+                  .catch(err => console.error("Ошибка при списании фриспина:", err));
+                }
+
                 document.getElementById("spinBtn").style.pointerEvents = "none";
 
-                const finalPayload = new URLSearchParams({
-                  action: "savePrize",
-                  username: username,
-                  user_id: userId,
-                  prize: finalText,
-                  ip: ip
-                });
+                if (!window.wasSpinGrantedByFreespin) {
+                  const finalPayload = new URLSearchParams({
+                    action: "savePrize",
+                    username: username,
+                    user_id: userId,
+                    prize: finalText,
+                    ip: ip
+                  });
 
-                fetch("https://script.google.com/macros/s/AKfycbxplvQPVt_IIyJXPEoPNlS1SXBNuHmQOvr5xwUqy9zJEX0xtyF2RvsZxRjCK94evoAlvw/exec", {
-                  method: "POST",
-                  body: finalPayload.toString(),
-                  headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                  }
-                }).catch(err => {
-                  console.error("❌ Не удалось записать приз:", err);
-                });
+                  fetch("https://script.google.com/macros/s/AKfycbxplvQPVt_IIyJXPEoPNlS1SXBNuHmQOvr5xwUqy9zJEX0xtyF2RvsZxRjCK94evoAlvw/exec", {
+                    method: "POST",
+                    body: finalPayload.toString(),
+                    headers: {
+                      "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                  }).catch(err => {
+                    console.error("❌ Не удалось записать приз:", err);
+                  });
+                }
               });
           }, 4200);
         });
@@ -507,20 +547,54 @@
               const resultFrame = document.getElementById("resultText");
               const resultContent = document.getElementById("resultContent");
 
-              // loader.style.display = "none";
+              // mainContent.style.display = "none";
               mainContent.style.display = "none";
 
-            setTimeout(() => {
-              loader.innerHTML = `
-                <div style="font-size: 18px; margin: 0; padding: 20px 24px; color: #fff; text-align: center;">
-                  Вы уже крутили сегодня!<br>Попробуйте завтра.
-                </div>
-              `;
-            }, 10);
+              // Новый fetch к getValue
+              fetch("https://script.google.com/macros/s/AKfycbxplvQPVt_IIyJXPEoPNlS1SXBNuHmQOvr5xwUqy9zJEX0xtyF2RvsZxRjCK94evoAlvw/exec", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({
+                  action: "getValue",
+                  user_id: userId
+                })
+              })
+              .then(res => res.text())
+              .then(result => {
+                const num = parseInt(result, 10);
+                if (!isNaN(num) && num > 0) {
+                  window.wasSpinGrantedByFreespin = true;
+                  document.getElementById("loader").style.display = "none";
+                  document.getElementById("mainContent").style.display = "block";
+                } else {
+                  const loader = document.getElementById("loader");
+                  loader.innerHTML = `
+                    <div style="font-size: 18px; margin: 0; padding: 20px 24px; color: #fff; text-align: center;">
+                      Вы уже крутили сегодня!<br>Попробуйте завтра.
+                    </div>
+                  `;
+                  document.getElementById("spinBtn").style.pointerEvents = "none";
+                }
+              })
+              .catch(err => {
+                console.error("Ошибка при проверке getValue:", err);
+              });
 
-              // Блокируем кнопку
-              document.getElementById("spinBtn").style.pointerEvents = "none";
+              // Старый setTimeout больше не нужен:
+              // setTimeout(() => {
+              //   loader.innerHTML = `
+              //     <div style="font-size: 18px; margin: 0; padding: 20px 24px; color: #fff; text-align: center;">
+              //       Вы уже крутили сегодня!<br>Попробуйте завтра.
+              //     </div>
+              //   `;
+              // }, 10);
+
+              // Блокируем кнопку (перенесено внутрь else нового fetch)
+              // document.getElementById("spinBtn").style.pointerEvents = "none";
             } else {
+              window.wasSpinGrantedByFreespin = false;
               document.getElementById("loader").style.display = "none";
               document.getElementById("mainContent").style.display = "block";
             }

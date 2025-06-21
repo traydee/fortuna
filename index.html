@@ -345,25 +345,25 @@ document.getElementById("spinBtn").addEventListener("click", () => {
   if (spinButton.disabled) return; // предотвратим повторный клик
   spinButton.style.pointerEvents = "none";
   spinButton.disabled = true;
-      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      // if (!tgUser || !tgUser.id) {
-      //   const resultFrame = document.getElementById("resultText");
-      //   const resultContent = document.getElementById("resultContent");
-      //   resultContent.innerHTML = `
-      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-      //   `;
-      //   resultFrame.style.display = "block";
-      //   setTimeout(() => {
-      //     resultFrame.style.display = "none";
-      //   }, 10000);
-      //   return;
-      // }
+      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      if (!tgUser || !tgUser.id) {
+        const resultFrame = document.getElementById("resultText");
+        const resultContent = document.getElementById("resultContent");
+        resultContent.innerHTML = `
+          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+          <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+        `;
+        resultFrame.style.display = "block";
+        setTimeout(() => {
+          resultFrame.style.display = "none";
+        }, 10000);
+        return;
+      }
 
-      // const username = tgUser.username || "unknown";
-      // const userId = tgUser.id || "unknown";
-      const username = "unknown";
-      const userId = "unknown";
+      const username = tgUser.username || "unknown";
+      const userId = tgUser.id || "unknown";
+      // const username = "unknown";
+      // const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -542,26 +542,26 @@ document.getElementById("spinBtn").addEventListener("click", () => {
       }
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("loader").style.display = "flex";
-      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      // if (!tgUser || !tgUser.id) {
-      //   const resultFrame = document.getElementById("resultText");
-      //   const resultContent = document.getElementById("resultContent");
-      //   resultContent.innerHTML = `
-      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-      //   `;
-      //   resultFrame.style.display = "block";
-      //   setTimeout(() => {
-      //     resultFrame.style.display = "none";
-      //   }, 10000);
-      //   return;
-      // }
+      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      if (!tgUser || !tgUser.id) {
+        const resultFrame = document.getElementById("resultText");
+        const resultContent = document.getElementById("resultContent");
+        resultContent.innerHTML = `
+          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+          <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+        `;
+        resultFrame.style.display = "block";
+        setTimeout(() => {
+          resultFrame.style.display = "none";
+        }, 10000);
+        return;
+      }
 
-      // const username = tgUser.username || "unknown";
-      // const userId = tgUser.id || "unknown";
+      const username = tgUser.username || "unknown";
+      const userId = tgUser.id || "unknown";
 
-      const username = "unknown";
-      const userId = "unknown";
+      // const username = "unknown";
+      // const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -674,7 +674,7 @@ document.getElementById("spinBtn").addEventListener("click", () => {
 
   // --- Invite friends button handler with toast ---
   document.getElementById("inviteBtn").addEventListener("click", () => {
-    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+    const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
     if (!tgUser || !tgUser.id) return;
 
     const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;

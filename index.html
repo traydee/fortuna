@@ -16,7 +16,7 @@
     }
     body {
       font-family: sans-serif;
-      background: #6C5CFE;
+      background: #19363D;
       color: white;
     }
     .container {
@@ -26,6 +26,7 @@
       justify-content: center;
       min-height: 100vh;
       text-align: center;
+      padding-top: 16px;
     }
     .wheel-wrapper {
       position: relative;
@@ -34,6 +35,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      margin: 130px auto 0 auto;
     }
     .canvas-holder {
       width: 100%;
@@ -47,6 +49,8 @@
       overflow: visible;
       padding: 0;
       box-sizing: border-box;
+      box-shadow: 0 -35px 50px 50px rgba(154, 255, 160, 0.5);
+      border-radius: 50%;
     }
     .wheel img {
       width: 100%;
@@ -147,7 +151,7 @@
     }
     .spinner {
       border: 8px solid #f3f3f3;
-      border-top: 8px solid #6C5CFE;
+      border-top: 8px solid #DAFF9C;
       border-radius: 50%;
       width: 60px;
       height: 60px;
@@ -159,11 +163,16 @@
       100% { transform: rotate(360deg); }
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 100vh;">
       <div class="spinner"></div>
+    </div>
+    <div class="promo-banner" style="position: absolute; top: 77px; left: 43px; width: 315px; height: 91.74px; display: flex; flex-direction: column; align-items:center; justify-content: center; gap: 4px; ">
+    <img src="banner-title.png" alt="WEBTOP" style="max-width: 100%; height: auto;" />
+      <span style="font-family: 'Ubuntu', sans-serif; font-weight: 500; font-size: 18px; line-height: 100%; letter-spacing: 0%; text-align: center; text-transform: uppercase; color: white;">ЖМИ НА КОЛЕСО И ЗАБИРАЙ ПОДАРКИ</span>
     </div>
     <div id="mainContent" style="display: none;">
       <div class="wheel-wrapper">
@@ -177,10 +186,39 @@
           <img src="Autorenew.png" id="spinBtn" class="spin-layer layer3" />
         </div>
       </div>
-      <div class="result-frame" id="resultText" style="display: none;">
-        <span id="closeResult" class="close-btn">✖️</span>
-        <div id="resultContent"></div>
+      <div class="info-box" style="position: relative; width: 310px; height: 50px; margin: 40px auto 0 auto; display: flex; flex-direction: column; gap: 10px; border-radius: 7px; padding: 12px 22px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.15);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px;">Бесплатное вращение через</span>
+          <span id="countdownTimer" style="font-family: 'Ubuntu', sans-serif; font-weight: 400; font-size: 17px; line-height: 100%; letter-spacing: 0%; color: #B2B2B2; ">--:--:--</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px;">Вращения за друзей</span>
+          <span id="friendsCount" style="font-family: 'Ubuntu', sans-serif; font-weight: 400; font-size: 17px; line-height: 100%; letter-spacing: 0%; color: #96D52B;">0</span>
+        </div>
       </div>
+  <div class="result-frame" id="resultText" style="display: none;">
+    <span id="closeResult" class="close-btn">✖️</span>
+    <div id="resultContent"></div>
+  </div>
+
+  <!-- Модальное окно "нет спинов" с затемняющим фоном -->
+  <div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.6); z-index:9998;">
+    <div id="noSpinsModal" style="position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#1F2C29; color:white; padding:20px 30px; border-radius:12px; z-index:10000; text-align:center; font-family:'Ubuntu', sans-serif; width:260px;">
+      <span id="closeNoSpins" style="position: absolute; top: 10px; right: 14px; font-size: 20px; cursor: pointer; color: #96D52B;">✖️</span>
+      <div style="font-family: 'Ubuntu', sans-serif; font-size: 18px; font-weight: bold; color: #DAFF9C; margin-bottom: 10px;">Упс... Спины закончились(</div>
+      <img src="box.png" alt="box" style="width: 50px; margin: 14px auto;" />
+      <div style="font-family: 'Ubuntu', sans-serif; font-size: 13px; color: white; margin: 12px 0;">Подожди некоторое время или пригласи друзей!</div>
+      <div style="background: #445052; border-radius: 6px; padding: 6px 0; font-size: 12px; color: #ccc; margin-top: 14px;">
+        До следующего спина
+        <div id="modalCountdownTimer" style="font-family: 'Ubuntu', sans-serif; font-size: 20px; font-weight: bold; color: #96D52B; margin-top: 4px;">--:--:--</div>
+      </div>
+      <button id="inviteBtn" style="margin-top:14px; background: transparent; border: 2px solid #96D52B; padding: 10px 16px; color: #96D52B; font-weight: bold; border-radius: 8px; cursor:pointer; font-family: 'Ubuntu', sans-serif;">Пригласить друзей</button>
+    </div>
+  </div>
+
+  <div id="toast" style="opacity:0; transition: opacity 0.5s ease; position:fixed; top:20px; left:50%; transform:translateX(-50%); background: rgba(79, 79, 79, 0.5); color:#fff; padding:8px 16px; border-radius:8px; font-size:14px; font-family:'Ubuntu', sans-serif; z-index:10001;">
+    Ссылка скопирована
+  </div>
     </div>
   </div>
 
@@ -238,21 +276,18 @@
         ctx.arc(centerX, centerY, radius, startAngle, endAngle);
         let gradient;
         if (i % 2 === 0) {
-          // Сектор с radial gradient
-          gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-          gradient.addColorStop(0, "#0C1FD4");
-          gradient.addColorStop(0.8269, "#5E6CF9");
-          gradient.addColorStop(1, "#808CFF");
-        } else {
-          // Сектор с linear gradient
+          // Сектор с линейным градиентом: светло-зелёный
           gradient = ctx.createLinearGradient(
             centerX + Math.cos(startAngle) * radius,
             centerY + Math.sin(startAngle) * radius,
             centerX + Math.cos(endAngle) * radius,
             centerY + Math.sin(endAngle) * radius
           );
-          gradient.addColorStop(0.5, "#B168FF");
-          gradient.addColorStop(0.8871, "#6C5CFE");
+          gradient.addColorStop(0, "#DAFF9C");
+          gradient.addColorStop(1, "#9BF3A0");
+        } else {
+          // Тёмно-зелёный сектор (без градиента)
+          gradient = "#19363D";
         }
         ctx.fillStyle = gradient;
         ctx.fill();
@@ -305,26 +340,30 @@
 
     let currentRotation = 0;
 
-    document.getElementById("spinBtn").addEventListener("click", () => {
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+document.getElementById("spinBtn").addEventListener("click", () => {
+  const spinButton = document.getElementById("spinBtn");
+  if (spinButton.disabled) return; // предотвратим повторный клик
+  spinButton.style.pointerEvents = "none";
+  spinButton.disabled = true;
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
-      // const username = "unknown";
-      // const userId = "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -483,15 +522,16 @@
                   });
                 }
               });
+            spinButton.style.pointerEvents = "auto";
+            spinButton.disabled = false;
           }, 4200);
         });
     });
 
-    document.getElementById("closeResult").addEventListener("click", () => {
-      document.getElementById("resultText").style.display = "none";
-    });
-
-
+  document.getElementById("closeResult").addEventListener("click", () => {
+    document.getElementById("resultText").style.display = "none";
+    location.reload(); // Перезагрузка страницы
+  });
 
     loadImages(drawWheel);
 
@@ -502,26 +542,26 @@
       }
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("loader").style.display = "flex";
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/your_bot_username" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
 
-      // const username = "unknown";
-      // const userId = "unknown";
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -543,13 +583,46 @@
               "Content-Type": "application/x-www-form-urlencoded"
             }
           }).then(res => res.text()).then(text => {
-            if (text === "Too Soon") {
+            if (text.startsWith("Too Soon|")) {
+              const millisLeft = parseInt(text.split("|")[1], 10);
+              // Вставляем функцию и запуск таймера сразу после парсинга millisLeft
+              function startCountdown(msLeft) {
+                const countdownSpan = document.getElementById("countdownTimer");
+                if (!countdownSpan) return;
+
+                function updateTimer(ms) {
+                  const totalSeconds = Math.floor(ms / 1000);
+                  const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+                  const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+                  const s = String(totalSeconds % 60).padStart(2, '0');
+                  countdownSpan.textContent = `${h}:${m}:${s}`;
+                  // Обновляем таймер в модальном окне, если он есть
+                  const modalTimer = document.getElementById("modalCountdownTimer");
+                  if (modalTimer) modalTimer.textContent = `${h}:${m}:${s}`;
+                }
+
+                let remaining = msLeft;
+                updateTimer(remaining);
+                const timerInterval = setInterval(() => {
+                  remaining -= 1000;
+                  if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    countdownSpan.textContent = "00:00:00";
+                    const modalTimer = document.getElementById("modalCountdownTimer");
+                    if (modalTimer) modalTimer.textContent = "00:00:00";
+                  } else {
+                    updateTimer(remaining);
+                  }
+                }, 1000);
+              }
+              // Запустить таймер сразу после первого ответа
+              startCountdown(millisLeft);
+
               const loader = document.getElementById("loader");
               const mainContent = document.getElementById("mainContent");
               const resultFrame = document.getElementById("resultText");
               const resultContent = document.getElementById("resultContent");
 
-              // mainContent.style.display = "none";
               mainContent.style.display = "none";
 
               // Новый fetch к getValue
@@ -565,36 +638,28 @@
               })
               .then(res => res.text())
               .then(result => {
-                const num = parseInt(result, 10);
+                const num = result.includes("Error") ? 0 : parseInt(result, 10) || 0;
+                document.getElementById("friendsCount").textContent = num;
                 if (!isNaN(num) && num > 0) {
                   window.wasSpinGrantedByFreespin = true;
                   document.getElementById("loader").style.display = "none";
                   document.getElementById("mainContent").style.display = "block";
                 } else {
-                  const loader = document.getElementById("loader");
-                  loader.innerHTML = `
-                    <div style="font-size: 18px; margin: 0; padding: 20px 24px; color: #fff; text-align: center;">
-                      Вы уже крутили сегодня!<br>Попробуйте завтра.
-                    </div>
-                  `;
+                  // Показываем mainContent и прячем loader
+                  document.getElementById("loader").style.display = "none";
+                  document.getElementById("mainContent").style.display = "block";
                   document.getElementById("spinBtn").style.pointerEvents = "none";
+                  // Показываем модальное окно "нет спинов"
+                  document.getElementById("noSpinsModal").style.display = "block";
+                  document.getElementById("modalOverlay").style.display = "block";
+                  // Таймер уже запущен выше
+                  console.log("Ответ от сервера:", text);
+                  console.log("Осталось миллисекунд:", millisLeft);
                 }
               })
               .catch(err => {
                 console.error("Ошибка при проверке getValue:", err);
               });
-
-              // Старый setTimeout больше не нужен:
-              // setTimeout(() => {
-              //   loader.innerHTML = `
-              //     <div style="font-size: 18px; margin: 0; padding: 20px 24px; color: #fff; text-align: center;">
-              //       Вы уже крутили сегодня!<br>Попробуйте завтра.
-              //     </div>
-              //   `;
-              // }, 10);
-
-              // Блокируем кнопку (перенесено внутрь else нового fetch)
-              // document.getElementById("spinBtn").style.pointerEvents = "none";
             } else {
               window.wasSpinGrantedByFreespin = false;
               document.getElementById("loader").style.display = "none";
@@ -602,6 +667,25 @@
             }
           });
         });
+          // Обработчик закрытия модального окна "нет спинов"
+  document.getElementById("closeNoSpins").addEventListener("click", () => {
+    document.getElementById("modalOverlay").style.display = "none";
+  });
+
+  // --- Invite friends button handler with toast ---
+  document.getElementById("inviteBtn").addEventListener("click", () => {
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+    if (!tgUser || !tgUser.id) return;
+
+    const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
+    navigator.clipboard.writeText(link).then(() => {
+      const toast = document.getElementById("toast");
+      toast.style.opacity = "1";
+      setTimeout(() => {
+        toast.style.opacity = "0";
+      }, 3000);
+    });
+  });
     });
   </script>
 </body>

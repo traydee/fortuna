@@ -84,6 +84,7 @@
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 0 30px 2px rgba(154, 255, 160, 0.3);
       z-index: 9999;
       text-align: center;
       min-width: 220px;
@@ -95,7 +96,7 @@
       right: 10px;
       cursor: pointer;
       font-size: 18px;
-      color: #000;
+      color: #96D52B;
     }
     .pointer {
       position: absolute;
@@ -170,7 +171,7 @@
     <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 100vh;">
       <div class="spinner"></div>
     </div>
-    <div class="promo-banner" style="position: absolute; top: 77px; left: 43px; width: 315px; height: 91.74px; display: flex; flex-direction: column; align-items:center; justify-content: center; gap: 4px; ">
+    <div class="promo-banner" style="position: absolute; top: 60px; left: 43px; width: 315px; height: 91.74px; display: flex; flex-direction: column; align-items:center; justify-content: center; gap: 4px; ">
     <img src="banner-title.png" alt="WEBTOP" style="max-width: 100%; height: auto;" />
       <span style="font-family: 'Ubuntu', sans-serif; font-weight: 500; font-size: 18px; line-height: 100%; letter-spacing: 0%; text-align: center; text-transform: uppercase; color: white;">ЖМИ НА КОЛЕСО И ЗАБИРАЙ ПОДАРКИ</span>
     </div>
@@ -196,15 +197,16 @@
           <span id="friendsCount" style="font-family: 'Ubuntu', sans-serif; font-weight: 400; font-size: 17px; line-height: 100%; letter-spacing: 0%; color: #96D52B;">0</span>
         </div>
       </div>
-  <div class="result-frame" id="resultText" style="display: none;">
-    <span id="closeResult" class="close-btn">✖️</span>
-    <div id="resultContent"></div>
+  <div id="resultOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.6); z-index:9998;">
+    <div class="result-frame" id="resultText" style="display: block;">
+      <div id="resultContent"></div>
+    </div>
   </div>
 
   <!-- Модальное окно "нет спинов" с затемняющим фоном -->
   <div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.6); z-index:9998;">
-    <div id="noSpinsModal" style="position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#1F2C29; color:white; padding:20px 30px; border-radius:12px; z-index:10000; text-align:center; font-family:'Ubuntu', sans-serif; width:260px;">
-      <span id="closeNoSpins" style="position: absolute; top: 10px; right: 14px; font-size: 20px; cursor: pointer; color: #96D52B;">✖️</span>
+    <div id="noSpinsModal" style="position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#1F2C29; color:white; padding:20px 30px; border-radius:12px; z-index:10000; text-align:center; font-family:'Ubuntu', sans-serif; width:260px; box-shadow: 0 0 30px 2px rgba(154, 255, 160, 0.3);">
+      <img id="closeNoSpins" src="close.png" alt="Закрыть" style="position: absolute; top: 10px; right: 14px; width: 18px; height: 18px; cursor: pointer;" />
       <div style="font-family: 'Ubuntu', sans-serif; font-size: 18px; font-weight: bold; color: #DAFF9C; margin-bottom: 10px;">Упс... Спины закончились(</div>
       <img src="box.png" alt="box" style="width: 50px; margin: 14px auto;" />
       <div style="font-family: 'Ubuntu', sans-serif; font-size: 13px; color: white; margin: 12px 0;">Подожди некоторое время или пригласи друзей!</div>
@@ -460,8 +462,32 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                   finalText = prizeLabel;
                 }
 
-                resultContent.textContent = `Ваш приз: ${finalText}`;
+                // Кастомное окно результата
+                resultContent.innerHTML = `
+                  <img id="closeResult" src="close.png" alt="Закрыть" style="position: absolute; top: 10px; right: 14px; width: 18px; height: 18px; cursor: pointer;" />
+                  <div style="font-family: 'Ubuntu', sans-serif; font-size: 18px; font-weight: bold; color: #DAFF9C; margin-bottom: 10px;">Вау! Ваш приз это....</div>
+                  <img src="giftbox.png" alt="gift" style="width: 60px; margin: 14px auto;" />
+                  <div style="font-family: 'Ubuntu', sans-serif; font-size: 10px; font-weight: 400; color: white; margin: 12px 0;">${finalText.toUpperCase()}</div>
+                  <div style="font-family: 'Ubuntu', sans-serif; font-size: 16px; color: #96D52B; font-weight: bold;">ХАХАШКА</div>
+                `;
+                document.getElementById("resultOverlay").style.display = "block";
                 resultFrame.style.display = "block";
+                resultFrame.style.background = "#1F2C29";
+                resultFrame.style.color = "white";
+
+                // Remove any duplicated ✖️ close button if present
+                const closeSpan = resultContent.querySelector('.close-btn');
+                if (closeSpan) closeSpan.remove();
+
+                // Add event listener for new closeResult image
+                const closeResultImg = resultContent.querySelector('#closeResult');
+                if (closeResultImg) {
+                  closeResultImg.addEventListener("click", () => {
+                    document.getElementById("resultOverlay").style.display = "none";
+                    resultFrame.style.display = "none";
+                    location.reload(); // Перезагрузка страницы
+                  });
+                }
 
                 if (window.wasSpinGrantedByFreespin) {
                   // Сначала списываем фриспин
@@ -528,10 +554,7 @@ document.getElementById("spinBtn").addEventListener("click", () => {
         });
     });
 
-  document.getElementById("closeResult").addEventListener("click", () => {
-    document.getElementById("resultText").style.display = "none";
-    location.reload(); // Перезагрузка страницы
-  });
+  // NOTE: closeResult event is now attached dynamically after resultContent.innerHTML is set.
 
     loadImages(drawWheel);
 
@@ -623,6 +646,8 @@ document.getElementById("spinBtn").addEventListener("click", () => {
               const resultFrame = document.getElementById("resultText");
               const resultContent = document.getElementById("resultContent");
 
+              // Also hide result overlay if showing
+              document.getElementById("resultOverlay").style.display = "none";
               mainContent.style.display = "none";
 
               // Новый fetch к getValue
@@ -644,10 +669,12 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                   window.wasSpinGrantedByFreespin = true;
                   document.getElementById("loader").style.display = "none";
                   document.getElementById("mainContent").style.display = "block";
+                  document.getElementById("resultOverlay").style.display = "none";
                 } else {
                   // Показываем mainContent и прячем loader
                   document.getElementById("loader").style.display = "none";
                   document.getElementById("mainContent").style.display = "block";
+                  document.getElementById("resultOverlay").style.display = "none";
                   document.getElementById("spinBtn").style.pointerEvents = "none";
                   // Показываем модальное окно "нет спинов"
                   document.getElementById("noSpinsModal").style.display = "block";
@@ -662,8 +689,9 @@ document.getElementById("spinBtn").addEventListener("click", () => {
               });
             } else {
               window.wasSpinGrantedByFreespin = false;
-              document.getElementById("loader").style.display = "none";
+             document.getElementById("loader").style.display = "none";
               document.getElementById("mainContent").style.display = "block";
+              document.getElementById("resultOverlay").style.display = "none";
             }
           });
         });
@@ -674,7 +702,8 @@ document.getElementById("spinBtn").addEventListener("click", () => {
 
   // --- Invite friends button handler with toast ---
   document.getElementById("inviteBtn").addEventListener("click", () => {
-    const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+    // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
     if (!tgUser || !tgUser.id) return;
 
     const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;

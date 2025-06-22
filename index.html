@@ -76,28 +76,28 @@
     }
     /* --- Pulse Animation --- */
     @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.1);
-      }
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
     }
 
     @keyframes spinAndPulse {
       0%   { transform: rotate(0deg) scale(1); }
-      25%  { transform: rotate(360deg) scale(1.1); }
-      50%  { transform: rotate(720deg) scale(1.2); }
-      75%  { transform: rotate(1080deg) scale(1.1); }
+      25%  { transform: rotate(360deg) scale(1.05); }
+      50%  { transform: rotate(720deg) scale(1.1); }
+      75%  { transform: rotate(1080deg) scale(1.05); }
       100% { transform: rotate(1440deg) scale(1); }
     }
 
     .spin-active {
-      animation: spinAndPulse 2s linear forwards, pulse 1.5s infinite;
-    }
-
-    #spinBtn.spinning {
-      animation: spinAndPulse 4s linear infinite;
+      animation: pulse 2s infinite;
+      animation: spinAndPulse 3s linear infinite;
     }
     .result-frame {
       position: fixed;
@@ -182,11 +182,6 @@
       width: 60px;
       height: 60px;
       animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
     }
 
     /* --- Adaptive banner & wheel for mobile screens --- */
@@ -417,26 +412,26 @@ document.getElementById("spinBtn").addEventListener("click", () => {
   if (spinButton.disabled) return; // предотвратим повторный клик
   spinButton.style.pointerEvents = "none";
   spinButton.disabled = true;
-  spinButton.classList.add("spinning");
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+  spinButton.classList.add("spin-active");
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
-      // const username = "unknown";
-      // const userId = "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -669,7 +664,7 @@ document.getElementById("spinBtn").addEventListener("click", () => {
               });
             spinButton.style.pointerEvents = "auto";
             spinButton.disabled = false;
-            spinButton.classList.remove("spinning");
+            spinButton.classList.remove("spin-active");
           }, spinDuration * 1000 + 10);
         });
     });
@@ -699,26 +694,26 @@ document.getElementById("spinBtn").addEventListener("click", () => {
       }
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("loader").style.display = "flex";
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
 
-      // const username = "unknown";
-      // const userId = "unknown";
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -883,17 +878,8 @@ document.getElementById("spinBtn").addEventListener("click", () => {
         toast.style.display = "none";
       }, 5000);
     }
-    // --- Spin button animation: spinAndPulse + pulse ---
-    function startSpinAnimation() {
-      const spinBtn = document.getElementById("spinBtn");
-      spinBtn.classList.remove("spin-active");
-      void spinBtn.offsetWidth; // принудительный reflow
-      spinBtn.classList.add("spin-active");
-
-      setTimeout(() => {
-        spinBtn.classList.remove("spin-active");
-      }, 1000); // убрать анимации после 2 сек
-    }
+    // --- Spin button animation: spinAndPulse ---
+    // Анимация запускается через добавление/удаление класса .spin-active в обработчике клика выше.
   });
   </script>
 </body>

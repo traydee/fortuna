@@ -171,7 +171,7 @@
     <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 100vh;">
       <div class="spinner"></div>
     </div>
-    <div class="promo-banner" style="position: absolute; top: 60px; left: 43px; width: 315px; height: 91.74px; display: flex; flex-direction: column; align-items:center; justify-content: center; gap: 4px; ">
+    <div class="promo-banner" style="position: absolute; top: 60px; width: 315px; height: 91.74px; display: flex; flex-direction: column; align-items:center; justify-content: center; gap: 4px; ">
     <img src="banner-title.png" alt="WEBTOP" style="max-width: 100%; height: auto;" />
       <span style="font-family: 'Ubuntu', sans-serif; font-weight: 500; font-size: 18px; line-height: 100%; letter-spacing: 0%; text-align: center; text-transform: uppercase; color: white;">ЖМИ НА КОЛЕСО И ЗАБИРАЙ ПОДАРКИ</span>
     </div>
@@ -197,6 +197,9 @@
           <span id="friendsCount" style="font-family: 'Ubuntu', sans-serif; font-weight: 400; font-size: 17px; line-height: 100%; letter-spacing: 0%; color: #96D52B;">0</span>
         </div>
       </div>
+      <div style="margin-bottom: 12px; margin-top: 30px; font-size: 13px; color: #B2B2B2">Пригласите друзей для бесплатных вращений :</div>
+        <button id="inviteBtnMain" style="width: 355px; background: transparent; border: 2px solid #96D52B; padding: 10px 16px; color: #96D52B; font-weight: bold; border-radius: 8px; cursor:pointer; font-family: 'Ubuntu', sans-serif;">Пригласить друзей</button>
+      </div>
   <div id="resultOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.6); z-index:9998;">
     <div class="result-frame" id="resultText" style="display: block;">
       <div id="resultContent"></div>
@@ -214,7 +217,7 @@
         До следующего спина
         <div id="modalCountdownTimer" style="font-family: 'Ubuntu', sans-serif; font-size: 20px; font-weight: bold; color: #96D52B; margin-top: 4px;">--:--:--</div>
       </div>
-      <button id="inviteBtn" style="margin-top:14px; background: transparent; border: 2px solid #96D52B; padding: 10px 16px; color: #96D52B; font-weight: bold; border-radius: 8px; cursor:pointer; font-family: 'Ubuntu', sans-serif;">Пригласить друзей</button>
+      <button id="inviteBtnModal" style="width: 260px; margin-top:14px; background: transparent; border: 2px solid #96D52B; padding: 10px 16px; color: #96D52B; font-weight: bold; border-radius: 8px; cursor:pointer; font-family: 'Ubuntu', sans-serif;">Пригласить друзей</button>
     </div>
   </div>
 
@@ -558,6 +561,20 @@ document.getElementById("spinBtn").addEventListener("click", () => {
 
     loadImages(drawWheel);
 
+    window.addEventListener("DOMContentLoaded", async () => {
+      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      if (!tgUser || !tgUser.id) return;
+
+      const isAvailable = await fetch(`https://your-backend.com/check?id=${tgUser.id}`)
+        .then(res => res.json())
+        .then(data => data.available)
+        .catch(() => false);
+
+      if (isAvailable) {
+        document.getElementById("startModal").style.display = "flex";
+      }
+    });
+
 
     window.addEventListener("DOMContentLoaded", () => {
       if (window.Telegram && window.Telegram.WebApp) {
@@ -701,9 +718,16 @@ document.getElementById("spinBtn").addEventListener("click", () => {
   });
 
   // --- Invite friends button handler with toast ---
-  document.getElementById("inviteBtn").addEventListener("click", () => {
-    // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+  document.getElementById("inviteBtnMain").addEventListener("click", copyLink);
+  document.getElementById("inviteBtnModal").addEventListener("click", copyLink);
+  // Invite button in modalAccessGranted (added below)
+  if (document.getElementById("inviteBtn")) {
+    document.getElementById("inviteBtn").addEventListener("click", copyLink);
+  }
+
+  function copyLink() {
     const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
     if (!tgUser || !tgUser.id) return;
 
     const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
@@ -714,7 +738,35 @@ document.getElementById("spinBtn").addEventListener("click", () => {
         toast.style.opacity = "0";
       }, 3000);
     });
-  });
+  }
+
+  // showToast function (if not exists)
+  function showToast(msg) {
+    const toast = document.getElementById("resultText");
+    document.getElementById("resultContent").textContent = msg;
+    toast.style.display = "block";
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 5000);
+  }
+  // --- Проверка доступа (примерная вставка POST-запроса на /check) ---
+  // Найдите вашу функцию, где отправляется POST-запрос на /check.
+  // Для примера, ниже добавлен универсальный шаблон:
+  /*
+  fetch('/check', {
+    method: 'POST',
+    body: ...,
+    headers: { ... }
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.allowed) {
+        document.getElementById("modalAccessGranted").style.display = "flex";
+      } else {
+        showToast("Вы уже крутили сегодня. Попробуйте завтра!");
+      }
+    });
+  */
     });
   </script>
 </body>

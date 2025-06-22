@@ -201,8 +201,6 @@
         margin-top: 90px;
       }
     }
-    
-  
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap" rel="stylesheet">
 </head>
@@ -240,6 +238,8 @@
       <div style="margin-bottom: 12px; margin-top: 30px; font-size: 13px; color: #B2B2B2">Пригласите друзей для бесплатных вращений :</div>
         <button id="inviteBtnMain" style="width: 355px; background: transparent; border: 2px solid #96D52B; padding: 10px 16px; color: #96D52B; font-weight: bold; border-radius: 8px; cursor:pointer; font-family: 'Ubuntu', sans-serif;">Пригласить друзей</button>
       </div>
+    </div>
+  </div>
   <div id="resultOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.6); z-index:9998;">
     <div class="result-frame" id="resultText" style="display: block;">
       <div id="resultContent"></div>
@@ -279,7 +279,7 @@
         • Лайки для Chaturbate<br/>
         • Курс от ТОП-модели по выходу на высокие чеки
       </div>
-</div>
+      </div>
       <div style="margin-top: 12px; background: rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 18px; text-align: left;">
         <div style="font-family: 'Ubuntu', sans-serif; font-weight: 600; font-size: 14.5px; margin-bottom: 6px;">
           1 вращение в 24 часа!
@@ -832,87 +832,69 @@ document.getElementById("spinBtn").addEventListener("click", () => {
             }
           });
         });
-          // Обработчик закрытия модального окна "нет спинов"
-  document.getElementById("closeNoSpins").addEventListener("click", () => {
-    document.getElementById("modalOverlay").style.display = "none";
-    document.getElementById("noSpinsModal").style.display = "none";
-  });
-    // Обработчик закрытия модального окна "разрешён спин"
-  if (document.getElementById("closeYesSpin")) {
-    document.getElementById("closeYesSpin").addEventListener("click", () => {
+    // Обработчик закрытия модального окна "нет спинов"
+    document.getElementById("closeNoSpins").addEventListener("click", () => {
       document.getElementById("modalOverlay").style.display = "none";
-      document.getElementById("yesSpinModal").style.display = "none";
+      document.getElementById("noSpinsModal").style.display = "none";
+    });
+    // Обработчик закрытия модального окна "разрешён спин"
+    if (document.getElementById("closeYesSpin")) {
+      document.getElementById("closeYesSpin").addEventListener("click", () => {
+        document.getElementById("modalOverlay").style.display = "none";
+        document.getElementById("yesSpinModal").style.display = "none";
+        document.getElementById("modalOverlayStart").style.display = "none";
+      });
+    }
+    document.getElementById("startSpinBtn").addEventListener("click", function () {
       document.getElementById("modalOverlayStart").style.display = "none";
     });
-  }
-  document.getElementById("startSpinBtn").addEventListener("click", function () {
-    document.getElementById("modalOverlayStart").style.display = "none";
-  });
 
-  // --- Invite friends button handler with toast ---
-  document.getElementById("inviteBtnMain").addEventListener("click", copyLink);
-  document.getElementById("inviteBtnModal").addEventListener("click", copyLink);
-  document.getElementById("inviteBtnModalStart").addEventListener("click", copyLink);
-  // Invite button in modalAccessGranted (added below)
-  
-  if (document.getElementById("inviteBtn")) {
-    document.getElementById("inviteBtn").addEventListener("click", copyLink);
-  }
+    // --- Invite friends button handler with toast ---
+    document.getElementById("inviteBtnMain").addEventListener("click", copyLink);
+    document.getElementById("inviteBtnModal").addEventListener("click", copyLink);
+    document.getElementById("inviteBtnModalStart").addEventListener("click", copyLink);
+    // Invite button in modalAccessGranted (added below)
+    
+    if (document.getElementById("inviteBtn")) {
+      document.getElementById("inviteBtn").addEventListener("click", copyLink);
+    }
 
-  function copyLink() {
-    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-    // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
-    if (!tgUser || !tgUser.id) return;
+    function copyLink() {
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      if (!tgUser || !tgUser.id) return;
 
-    const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
-    navigator.clipboard.writeText(link).then(() => {
-      const toast = document.getElementById("toast");
-      toast.style.opacity = "1";
+      const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
+      navigator.clipboard.writeText(link).then(() => {
+        const toast = document.getElementById("toast");
+        toast.style.opacity = "1";
+        setTimeout(() => {
+          toast.style.opacity = "0";
+        }, 3000);
+      });
+    }
+
+    // showToast function (if not exists)
+    function showToast(msg) {
+      const toast = document.getElementById("resultText");
+      document.getElementById("resultContent").textContent = msg;
+      toast.style.display = "block";
       setTimeout(() => {
-        toast.style.opacity = "0";
-      }, 3000);
-    });
-  }
-
-  // showToast function (if not exists)
-  function showToast(msg) {
-    const toast = document.getElementById("resultText");
-    document.getElementById("resultContent").textContent = msg;
-    toast.style.display = "block";
-    setTimeout(() => {
-      toast.style.display = "none";
-    }, 5000);
-  }
+        toast.style.display = "none";
+      }, 5000);
+    }
     // --- Spin button animation: spinAndPulse + pulse ---
-  function startSpinAnimation() {
-    const spinBtn = document.getElementById("spinBtn");
-    spinBtn.classList.remove("spin-active");
-    void spinBtn.offsetWidth; // принудительный reflow
-    spinBtn.classList.add("spin-active");
-
-    setTimeout(() => {
+    function startSpinAnimation() {
+      const spinBtn = document.getElementById("spinBtn");
       spinBtn.classList.remove("spin-active");
-    }, 2000); // убрать анимации после 2 сек
-  }
-  // --- Проверка доступа (примерная вставка POST-запроса на /check) ---
-  // Найдите вашу функцию, где отправляется POST-запрос на /check.
-  // Для примера, ниже добавлен универсальный шаблон:
-  /*
-  fetch('/check', {
-    method: 'POST',
-    body: ...,
-    headers: { ... }
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.allowed) {
-        document.getElementById("modalAccessGranted").style.display = "flex";
-      } else {
-        showToast("Вы уже крутили сегодня. Попробуйте завтра!");
-      }
-    });
-  */
-    });
+      void spinBtn.offsetWidth; // принудительный reflow
+      spinBtn.classList.add("spin-active");
+
+      setTimeout(() => {
+        spinBtn.classList.remove("spin-active");
+      }, 2000); // убрать анимации после 2 сек
+    }
+  });
   </script>
 </body>
 </html>

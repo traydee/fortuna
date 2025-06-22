@@ -186,17 +186,18 @@
     }
 
     /* --- Adaptive banner & wheel for mobile screens --- */
-    @media (max-height: 480), (max-width: 400px) {
+    @media (max-height: 720px), (max-width: 380px) {
       .promo-banner {
-        transform: scale(0.85);
-        top: 10px;
+        transform: scale(0.65);
+        top: 4px;
       }
 
       .wheel-wrapper {
-        transform: scale(0.85);
-        margin-top: 150px;
+        transform: scale(0.7);
+        margin-top: 20px;
       }
     }
+  
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap" rel="stylesheet">
 </head>
@@ -386,25 +387,25 @@ document.getElementById("spinBtn").addEventListener("click", () => {
   spinButton.style.pointerEvents = "none";
   spinButton.disabled = true;
   spinButton.classList.add("spinning");
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
-      // const username = "unknown";
-      // const userId = "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -662,31 +663,31 @@ document.getElementById("spinBtn").addEventListener("click", () => {
 
 
     window.addEventListener("DOMContentLoaded", () => {
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.expand();
-      }
-      document.getElementById("mainContent").style.display = "none";
-      document.getElementById("loader").style.display = "flex";
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+      // if (window.Telegram && window.Telegram.WebApp) {
+      //   window.Telegram.WebApp.expand();
+      // }
+      // document.getElementById("mainContent").style.display = "none";
+      // document.getElementById("loader").style.display = "flex";
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
 
-      // const username = "unknown";
-      // const userId = "unknown";
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -811,8 +812,8 @@ document.getElementById("spinBtn").addEventListener("click", () => {
   }
 
   function copyLink() {
-    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-    // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+    // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
     if (!tgUser || !tgUser.id) return;
 
     const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;

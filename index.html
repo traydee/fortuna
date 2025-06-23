@@ -183,6 +183,10 @@
       height: 60px;
       animation: spin 1s linear infinite;
     }
+    @keyframes spin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
     /* --- Adaptive banner & wheel for mobile screens --- */
     @media (max-height: 720px), (max-width: 380px) {
@@ -413,25 +417,25 @@ document.getElementById("spinBtn").addEventListener("click", () => {
   spinButton.style.pointerEvents = "none";
   spinButton.disabled = true;
   spinButton.classList.add("spin-active");
-      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      // if (!tgUser || !tgUser.id) {
-      //   const resultFrame = document.getElementById("resultText");
-      //   const resultContent = document.getElementById("resultContent");
-      //   resultContent.innerHTML = `
-      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-      //   `;
-      //   resultFrame.style.display = "block";
-      //   setTimeout(() => {
-      //     resultFrame.style.display = "none";
-      //   }, 10000);
-      //   return;
-      // }
+      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      if (!tgUser || !tgUser.id) {
+        const resultFrame = document.getElementById("resultText");
+        const resultContent = document.getElementById("resultContent");
+        resultContent.innerHTML = `
+          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+          <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+        `;
+        resultFrame.style.display = "block";
+        setTimeout(() => {
+          resultFrame.style.display = "none";
+        }, 10000);
+        return;
+      }
 
-      // const username = tgUser.username || "unknown";
-      // const userId = tgUser.id || "unknown";
-      const username = "unknown";
-      const userId = "unknown";
+      const username = tgUser.username || "unknown";
+      const userId = tgUser.id || "unknown";
+      // const username = "unknown";
+      // const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -694,26 +698,26 @@ document.getElementById("spinBtn").addEventListener("click", () => {
       }
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("loader").style.display = "flex";
-      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      // if (!tgUser || !tgUser.id) {
-      //   const resultFrame = document.getElementById("resultText");
-      //   const resultContent = document.getElementById("resultContent");
-      //   resultContent.innerHTML = `
-      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-      //   `;
-      //   resultFrame.style.display = "block";
-      //   setTimeout(() => {
-      //     resultFrame.style.display = "none";
-      //   }, 10000);
-      //   return;
-      // }
+      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      if (!tgUser || !tgUser.id) {
+        const resultFrame = document.getElementById("resultText");
+        const resultContent = document.getElementById("resultContent");
+        resultContent.innerHTML = `
+          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+          <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+        `;
+        resultFrame.style.display = "block";
+        setTimeout(() => {
+          resultFrame.style.display = "none";
+        }, 10000);
+        return;
+      }
 
-      // const username = tgUser.username || "unknown";
-      // const userId = tgUser.id || "unknown";
+      const username = tgUser.username || "unknown";
+      const userId = tgUser.id || "unknown";
 
-      const username = "unknown";
-      const userId = "unknown";
+      // const username = "unknown";
+      // const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())

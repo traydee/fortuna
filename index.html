@@ -235,11 +235,9 @@
         </div>
       </div>
       <div style="margin-bottom: 12px; margin-top: 30px; font-size: 13px; color: #B2B2B2">Пригласите друзей для бесплатных вращений :</div>
-        <a id="inviteBtnMain"
-           href="#"
-           style="width: 355px; background: transparent; border: 2px solid #96D52B; padding: 10px 16px; color: #96D52B; font-weight: bold; border-radius: 8px; cursor:pointer; font-family: 'Ubuntu', sans-serif; text-align: center; display: inline-block; text-decoration: none;">
-           Пригласить друзей
-        </a>
+        <button id="inviteBtnMain" style="width: 355px; background: transparent;
+border: 2px solid #96D52B; padding: 10px 16px; color: #96D52B; font-weight: bold; border-radius: 8px; cursor:pointer; font-family: 'Ubuntu', sans-serif; ">Пригласить
+друзей</button>
       </div>
     </div>
   </div>
@@ -994,9 +992,6 @@ document.getElementById("spinBtn").addEventListener("click", () => {
       document.getElementById("modalOverlayStart").style.display = "none";
     });
 
-    // --- Invite friends button handler with toast ---
-    document.getElementById("inviteBtnModal").addEventListener("click", copyLink);
-    document.getElementById("inviteBtnModalStart").addEventListener("click", copyLink);
     // Invite button in modalAccessGranted (added below)
     
     if (document.getElementById("inviteBtn")) {
@@ -1020,6 +1015,22 @@ document.getElementById("spinBtn").addEventListener("click", () => {
 
     // --- open Telegram share for main invite button ---
     document.getElementById("inviteBtnMain").addEventListener("click", function (e) {
+      e.preventDefault();
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
+      const text = encodeURIComponent(`Я дарю тебе печенье с предсказанием! ${link}`);
+      window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${text}`);
+    });
+
+    document.getElementById("inviteBtnModal").addEventListener("click", function (e) {
+      e.preventDefault();
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
+      const text = encodeURIComponent(`Я дарю тебе печенье с предсказанием! ${link}`);
+      window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${text}`);
+    });
+
+    document.getElementById("inviteBtnModalStart").addEventListener("click", function (e) {
       e.preventDefault();
       const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
       const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;

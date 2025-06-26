@@ -580,7 +580,7 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                       <div style="font-family: 'Ubuntu', sans-serif; font-size: 15px; font-weight: bold; color: white; margin-bottom: 6px;">Сделайте скриншот приза</div>
                       <div style="font-family: 'Ubuntu', sans-serif; font-size: 12px; color: #ccc;">Для получения приза, сделайте скриншот и отправьте менеджеру, нажав на кнопку внизу</div>
                     </div>
-                    <button id="prizeBtn" style="width: 100%; background: #96D52B; border: none; padding: 12px; color: #1F2C29; font-weight: bold; border-radius: 8px; margin-top: 12px; cursor: pointer; font-family: 'Ubuntu', sans-serif; font-size: 16px;">Забрать приз</button>
+                    <button onclick="openPrizeChat()" style="width: 100%; background: #96D52B; border: none; padding: 12px; color: #1F2C29; font-weight: bold; border-radius: 8px; margin-top: 12px; cursor: pointer; font-family: 'Ubuntu', sans-serif; font-size: 16px;">Забрать приз</button>
                   `;
                   fetch("images_pr.json")
                     .then(res => res.json())
@@ -593,6 +593,11 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                       if (waitForGiftImg) {
                         waitForGiftImg.onload = () => {
                           resultContent.innerHTML = tempContainer.innerHTML;
+                          // --- Добавляем обработчик на кнопку #prizeBtn после вставки innerHTML ---
+                          const prizeBtn = document.getElementById("prizeBtn");
+                          if (prizeBtn) {
+                            prizeBtn.addEventListener("click", openPrizeChat);
+                          }
                           // --- Конфетти для Stripchat и Chaturbate ---
                           const confettiCanvas = document.createElement("canvas");
                           confettiCanvas.style.position = "fixed";
@@ -681,7 +686,7 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                       <div style="font-family: 'Ubuntu', sans-serif; font-size: 15px; font-weight: bold; color: white; margin-bottom: 6px;">Сделайте скриншот приза</div>
                       <div style="font-family: 'Ubuntu', sans-serif; font-size: 12px; color: #ccc;">Для получения приза, сделайте скриншот и отправьте менеджеру, нажав на кнопку внизу</div>
                     </div>
-                    <button id="prizeBtn" style="width: 100%; background: #96D52B; border: none; padding: 12px; color: #1F2C29; font-weight: bold; border-radius: 8px; margin-top: 12px; cursor: pointer; font-family: 'Ubuntu', sans-serif; font-size: 16px;">Забрать приз</button>
+                    <button onclick="openPrizeChat()" style="width: 100%; background: #96D52B; border: none; padding: 12px; color: #1F2C29; font-weight: bold; border-radius: 8px; margin-top: 12px; cursor: pointer; font-family: 'Ubuntu', sans-serif; font-size: 16px;">Забрать приз</button>
                   `;
                   fetch("images_pr.json")
                     .then(res => res.json())
@@ -694,6 +699,11 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                       if (waitForGiftImg) {
                         waitForGiftImg.onload = () => {
                           resultContent.innerHTML = tempContainer.innerHTML;
+                          // --- Добавляем обработчик на кнопку #prizeBtn после вставки innerHTML ---
+                          const prizeBtn = document.getElementById("prizeBtn");
+                          if (prizeBtn) {
+                            prizeBtn.addEventListener("click", openPrizeChat);
+                          }
                           // --- Конфетти для Stripchat и Chaturbate ---
                           const confettiCanvas = document.createElement("canvas");
                           confettiCanvas.style.position = "fixed";
@@ -780,12 +790,6 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                     resultFrame.style.display = "none";
                     location.reload(); // Перезагрузка страницы
                   });
-                }
-                // --- Add event listener for prize button (dynamically inserted) ---
-                const prizeBtn = document.getElementById("prizeBtn");
-                if (prizeBtn) {
-                  // For Stripchat and Chaturbate, both call openPrizeChat
-                  prizeBtn.addEventListener("click", openPrizeChat);
                 }
 
                 if (window.wasSpinGrantedByFreespin) {

@@ -227,7 +227,7 @@
       <div class="info-box" style="position: relative; width: 310px; height: 50px; margin: 20px auto 0 auto; display: flex; flex-direction: column; gap: 10px; border-radius: 7px; padding: 12px 22px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.15);">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <span style="font-size: 12px;">Бесплатное вращение через</span>
-          <span id="countdownTimer" style="font-family: 'Ubuntu', sans-serif; font-weight: 400; font-size: 17px; line-height: 100%; letter-spacing: 0%; color: #B2B2B2; ">--:--:--</span>
+          <span id="countdownTimer" style="font-family: 'Ubuntu', sans-serif; font-weight: 400; font-size: 17px; line-height: 100%; letter-spacing: 0%; color: #96D52B; ">доступен</span>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <span style="font-size: 12px;">Вращения за друзей</span>
@@ -235,7 +235,11 @@
         </div>
       </div>
       <div style="margin-bottom: 12px; margin-top: 30px; font-size: 13px; color: #B2B2B2">Пригласите друзей для бесплатных вращений :</div>
-        <button id="inviteBtnMain" style="width: 355px; background: transparent; border: 2px solid #96D52B; padding: 10px 16px; color: #96D52B; font-weight: bold; border-radius: 8px; cursor:pointer; font-family: 'Ubuntu', sans-serif;">Пригласить друзей</button>
+        <a id="inviteBtnMain"
+           href=""
+           style="width: 355px; background: transparent; border: 2px solid #96D52B; padding: 10px 16px; color: #96D52B; font-weight: bold; border-radius: 8px; cursor:pointer; font-family: 'Ubuntu', sans-serif; text-align: center; display: inline-block; text-decoration: none;">
+           Пригласить друзей
+        </a>
       </div>
     </div>
   </div>
@@ -417,25 +421,25 @@ document.getElementById("spinBtn").addEventListener("click", () => {
   spinButton.style.pointerEvents = "none";
   spinButton.disabled = true;
   spinButton.classList.add("spin-active");
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
-      // const username = "unknown";
-      // const userId = "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -550,11 +554,43 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                     .then(res => res.json())
                     .then(images => {
                       const randomImage = images[Math.floor(Math.random() * images.length)];
-                      const giftImg = document.getElementById("giftImg");
-                      if (giftImg) {
-                        giftImg.src = randomImage;
+                      // Используем временный контейнер и onload для #giftImg
+                      const tempContainer = document.createElement("div");
+                      tempContainer.innerHTML = resultHTML;
+                      const waitForGiftImg = tempContainer.querySelector('#giftImg');
+                      if (waitForGiftImg) {
+                        waitForGiftImg.onload = () => {
+                          resultContent.innerHTML = tempContainer.innerHTML;
+                          document.getElementById("resultOverlay").style.display = "block";
+                          resultFrame.style.display = "block";
+                          resultFrame.style.background = "#1F2C29";
+                          resultFrame.style.color = "white";
+                          // Назначаем обработчик закрытия после вставки innerHTML
+                          const closeResultImg = document.getElementById("resultContent").querySelector('#closeResult');
+                          if (closeResultImg) {
+                            closeResultImg.addEventListener("click", () => {
+                              document.getElementById("resultOverlay").style.display = "none";
+                              document.getElementById("resultText").style.display = "none";
+                              location.reload(); // обновить страницу
+                            });
+                          }
+                        };
+                        waitForGiftImg.src = randomImage;
                       } else {
-                        console.error("Не найден элемент с id='giftImg'");
+                        resultContent.innerHTML = tempContainer.innerHTML;
+                        document.getElementById("resultOverlay").style.display = "block";
+                        resultFrame.style.display = "block";
+                        resultFrame.style.background = "#1F2C29";
+                        resultFrame.style.color = "white";
+                        // Назначаем обработчик закрытия после вставки innerHTML
+                        const closeResultImg = document.getElementById("resultContent").querySelector('#closeResult');
+                        if (closeResultImg) {
+                          closeResultImg.addEventListener("click", () => {
+                            document.getElementById("resultOverlay").style.display = "none";
+                            document.getElementById("resultText").style.display = "none";
+                            location.reload(); // обновить страницу
+                          });
+                        }
                       }
                     })
                     .catch(err => {
@@ -571,7 +607,7 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                   resultHTML = `
                     <img id="closeResult" src="close.png" alt="Закрыть" style="position: absolute; top: 10px; right: 14px; width: 18px; height: 18px; cursor: pointer;" />
                     <div style="font-family: 'Ubuntu', sans-serif; font-size: 18px; font-weight: bold; color: #DAFF9C; margin-bottom: 10px;">Вау! Ваш приз это....</div>
-                    <img src="3.png" alt="Stripchat" style="width: 70px; transform: scale(1.2); margin: 14px auto; display: block;" />
+                    <img src="3.png" alt="Stripchat" style="width: 120px; transform: scale(1.2); margin: 12px auto; display: block;" />
                     <img id="giftImg" src="" alt="gift" style="width: 248px; margin: 10px auto; border-radius: 12px;" />
                     <div style="font-family: 'Ubuntu', sans-serif; font-size: 10px; font-weight: 400; color: white; margin: 12px 0;">${finalText.toUpperCase()}</div>
                     <div style="font-family: 'Ubuntu', sans-serif; font-size: 16px; font-weight: bold; color: #96D52B; margin-top: 10px;">${prizeTypeText}</div>
@@ -585,11 +621,43 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                     .then(res => res.json())
                     .then(images => {
                       const randomImage = images[Math.floor(Math.random() * images.length)];
-                      const giftImg = document.getElementById("giftImg");
-                      if (giftImg) {
-                        giftImg.src = randomImage;
+                      // Используем временный контейнер и onload для #giftImg
+                      const tempContainer = document.createElement("div");
+                      tempContainer.innerHTML = resultHTML;
+                      const waitForGiftImg = tempContainer.querySelector('#giftImg');
+                      if (waitForGiftImg) {
+                        waitForGiftImg.onload = () => {
+                          resultContent.innerHTML = tempContainer.innerHTML;
+                          document.getElementById("resultOverlay").style.display = "block";
+                          resultFrame.style.display = "block";
+                          resultFrame.style.background = "#1F2C29";
+                          resultFrame.style.color = "white";
+                          // Назначаем обработчик закрытия после вставки innerHTML
+                          const closeResultImg = document.getElementById("resultContent").querySelector('#closeResult');
+                          if (closeResultImg) {
+                            closeResultImg.addEventListener("click", () => {
+                              document.getElementById("resultOverlay").style.display = "none";
+                              document.getElementById("resultText").style.display = "none";
+                              location.reload(); // обновить страницу
+                            });
+                          }
+                        };
+                        waitForGiftImg.src = randomImage;
                       } else {
-                        console.error("Не найден элемент с id='giftImg'");
+                        resultContent.innerHTML = tempContainer.innerHTML;
+                        document.getElementById("resultOverlay").style.display = "block";
+                        resultFrame.style.display = "block";
+                        resultFrame.style.background = "#1F2C29";
+                        resultFrame.style.color = "white";
+                        // Назначаем обработчик закрытия после вставки innerHTML
+                        const closeResultImg = document.getElementById("resultContent").querySelector('#closeResult');
+                        if (closeResultImg) {
+                          closeResultImg.addEventListener("click", () => {
+                            document.getElementById("resultOverlay").style.display = "none";
+                            document.getElementById("resultText").style.display = "none";
+                            location.reload(); // обновить страницу
+                          });
+                        }
                       }
                     })
                     .catch(err => {
@@ -608,7 +676,7 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                   resultHTML = `
                     <img id="closeResult" src="close.png" alt="Закрыть" style="position: absolute; top: 10px; right: 14px; width: 18px; height: 18px; cursor: pointer;" />
                     <div style="font-family: 'Ubuntu', sans-serif; font-size: 18px; font-weight: bold; color: #DAFF9C; margin-bottom: 10px;">Вау! Ваш приз это....</div>
-                    <img src="2.png" alt="Chaturbate" style="width: 70px; transform: scale(1.2); margin: 14px auto; display: block;" />
+                    <img src="2.png" alt="Chaturbate" style="width: 120px; transform: scale(1.2); margin: 12px auto; display: block;" />
                     <img id="giftImg" src="" alt="gift" style="width: 248px; margin: 10px auto; border-radius: 12px;" />
                     <div style="font-family: 'Ubuntu', sans-serif; font-size: 10px; font-weight: 400; color: white; margin: 12px 0;">${finalText.toUpperCase()}</div>
                     <div style="font-family: 'Ubuntu', sans-serif; font-size: 16px; font-weight: bold; color: #96D52B; margin-top: 10px;">${prizeTypeText}</div>
@@ -622,23 +690,54 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                     .then(res => res.json())
                     .then(images => {
                       const randomImage = images[Math.floor(Math.random() * images.length)];
-                      const giftImg = document.getElementById("giftImg");
-                      if (giftImg) {
-                        giftImg.src = randomImage;
+                      // Используем временный контейнер и onload для #giftImg
+                      const tempContainer = document.createElement("div");
+                      tempContainer.innerHTML = resultHTML;
+                      const waitForGiftImg = tempContainer.querySelector('#giftImg');
+                      if (waitForGiftImg) {
+                        waitForGiftImg.onload = () => {
+                          resultContent.innerHTML = tempContainer.innerHTML;
+                          document.getElementById("resultOverlay").style.display = "block";
+                          resultFrame.style.display = "block";
+                          resultFrame.style.background = "#1F2C29";
+                          resultFrame.style.color = "white";
+                          // Назначаем обработчик закрытия после вставки innerHTML
+                          const closeResultImg = document.getElementById("resultContent").querySelector('#closeResult');
+                          if (closeResultImg) {
+                            closeResultImg.addEventListener("click", () => {
+                              document.getElementById("resultOverlay").style.display = "none";
+                              document.getElementById("resultText").style.display = "none";
+                              location.reload(); // обновить страницу
+                            });
+                          }
+                        };
+                        waitForGiftImg.src = randomImage;
                       } else {
-                        console.error("Не найден элемент с id='giftImg'");
+                        resultContent.innerHTML = tempContainer.innerHTML;
+                        document.getElementById("resultOverlay").style.display = "block";
+                        resultFrame.style.display = "block";
+                        resultFrame.style.background = "#1F2C29";
+                        resultFrame.style.color = "white";
+                        // Назначаем обработчик закрытия после вставки innerHTML
+                        const closeResultImg = document.getElementById("resultContent").querySelector('#closeResult');
+                        if (closeResultImg) {
+                          closeResultImg.addEventListener("click", () => {
+                            document.getElementById("resultOverlay").style.display = "none";
+                            document.getElementById("resultText").style.display = "none";
+                            location.reload(); // обновить страницу
+                          });
+                        }
                       }
                     })
                     .catch(err => {
                       console.error("Ошибка загрузки images_ha.json:", err);
                     });
-                  
                 }
-                resultContent.innerHTML = resultHTML;
-                document.getElementById("resultOverlay").style.display = "block";
-                resultFrame.style.display = "block";
-                resultFrame.style.background = "#1F2C29";
-                resultFrame.style.color = "white";
+                // resultContent.innerHTML = resultHTML;
+                // document.getElementById("resultOverlay").style.display = "block";
+                // resultFrame.style.display = "block";
+                // resultFrame.style.background = "#1F2C29";
+                // resultFrame.style.color = "white";
 
                 // Remove any duplicated ✖️ close button if present
                 const closeSpan = resultContent.querySelector('.close-btn');
@@ -745,26 +844,26 @@ document.getElementById("spinBtn").addEventListener("click", () => {
       }
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("loader").style.display = "flex";
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        const resultFrame = document.getElementById("resultText");
-        const resultContent = document.getElementById("resultContent");
-        resultContent.innerHTML = `
-          <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
-          <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
-        `;
-        resultFrame.style.display = "block";
-        setTimeout(() => {
-          resultFrame.style.display = "none";
-        }, 10000);
-        return;
-      }
+      // const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      // if (!tgUser || !tgUser.id) {
+      //   const resultFrame = document.getElementById("resultText");
+      //   const resultContent = document.getElementById("resultContent");
+      //   resultContent.innerHTML = `
+      //     <p>Пожалуйста, сначала нажмите "start" у бота в Telegram</p>
+      //     <a href="https://t.me/rollcam_bot" target="_blank" style="color: #6C5CFE; font-weight: bold;">Нажмите сюда</a>
+      //   `;
+      //   resultFrame.style.display = "block";
+      //   setTimeout(() => {
+      //     resultFrame.style.display = "none";
+      //   }, 10000);
+      //   return;
+      // }
 
-      const username = tgUser.username || "unknown";
-      const userId = tgUser.id || "unknown";
+      // const username = tgUser.username || "unknown";
+      // const userId = tgUser.id || "unknown";
 
-      // const username = "unknown";
-      // const userId = "unknown";
+      const username = "unknown";
+      const userId = "unknown";
 
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
@@ -896,7 +995,6 @@ document.getElementById("spinBtn").addEventListener("click", () => {
     });
 
     // --- Invite friends button handler with toast ---
-    document.getElementById("inviteBtnMain").addEventListener("click", copyLink);
     document.getElementById("inviteBtnModal").addEventListener("click", copyLink);
     document.getElementById("inviteBtnModalStart").addEventListener("click", copyLink);
     // Invite button in modalAccessGranted (added below)
@@ -906,8 +1004,8 @@ document.getElementById("spinBtn").addEventListener("click", () => {
     }
 
     function copyLink() {
-      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-      // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
       if (!tgUser || !tgUser.id) return;
 
       const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
@@ -919,6 +1017,15 @@ document.getElementById("spinBtn").addEventListener("click", () => {
         }, 3000);
       });
     }
+
+    // --- Custom handler for inviteBtnMain as <a> ---
+    document.getElementById("inviteBtnMain").addEventListener("click", function (e) {
+      e.preventDefault();
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
+      const text = encodeURIComponent(`Я дарю тебе печенье с предсказанием! ${link}`);
+      window.location.href = `tg://msg_url?url=${text}`;
+    });
 
     // showToast function (if not exists)
     function showToast(msg) {

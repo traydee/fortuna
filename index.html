@@ -1081,20 +1081,15 @@ document.getElementById("spinBtn").addEventListener("click", () => {
         toast.style.display = "none";
       }, 5000);
     }
-        // --- Функция для открытия Telegram чата и вставки текста для получения приза ---
+    // --- Функция для открытия Telegram чата и вставки текста для получения приза ---
     function openPrizeChat() {
-      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-      if (!tgUser || !tgUser.id) return;
-
-      const text = encodeURIComponent("Вам доступно новое вращение колеса! 🥳 Заходи, вращай и выигрывай бесплатное продвижение на на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки!");
-      window.Telegram.WebApp.openTelegramLink(`https://t.me/tray_dee?text=${text}`);
+      const text = encodeURIComponent("Вам доступно новое вращение колеса! 🥳 Заходи, вращай и выигрывай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки!");
+      window.open(`https://t.me/tray_dee?text=${text}`, '_blank');
     }
-        function openPrizeChat2() {
-      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-      if (!tgUser || !tgUser.id) return;
 
-      const text = encodeURIComponent("Вам доступно новое вращение колеса! 🥳 Заходи, вращай и выигрывай бесплатное продвижение на на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки!");
-      window.Telegram.WebApp.openTelegramLink(`https://t.me/tray_dee?text=${text}`);
+    function openPrizeChat2() {
+      const text = encodeURIComponent("Вам доступно новое вращение колеса! 🥳 Заходи, вращай и выигрывай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки!");
+      window.open(`https://t.me/tray_dee?text=${text}`, '_blank');
     }
     // --- Spin button animation: spinAndPulse ---
     // Анимация запускается через добавление/удаление класса .spin-active в обработчике клика выше.

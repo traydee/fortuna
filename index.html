@@ -499,39 +499,6 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                   const pool = prizeRand < 0.9 ? source.prize : source.superprize;
                   const selected = pool[Math.floor(Math.random() * pool.length)];
                   finalText = `${prizeLabel}: ${selected}`;
-
-                  // --- Конфетти для Stripchat и Chaturbate ---
-                  const confettiCanvas = document.createElement("canvas");
-                  confettiCanvas.style.position = "fixed";
-                  confettiCanvas.style.top = 0;
-                  confettiCanvas.style.left = 0;
-                  confettiCanvas.style.width = "100vw";
-                  confettiCanvas.style.height = "100vh";
-                  confettiCanvas.style.pointerEvents = "none";
-                  confettiCanvas.style.zIndex = 99999;
-                  document.body.appendChild(confettiCanvas);
-
-                  const script = document.createElement("script");
-                  script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
-                  script.onload = () => {
-                    const myConfetti = window.confetti.create(confettiCanvas, { resize: true });
-                    myConfetti({
-                      particleCount: 200,
-                      spread: 100,
-                      origin: { y: 0.6 },
-                      startVelocity: 30,
-                      gravity: 0.8,
-                      ticks: 200
-                    });
-
-                    setTimeout(() => {
-                      confettiCanvas.style.pointerEvents = "none";
-                      confettiCanvas.style.display = "none";
-                      confettiCanvas.remove();
-                    }, 6000);
-                  };
-                  document.body.appendChild(script);
-                  // --- конец конфетти ---
                 } else {
                   finalText = prizeLabel;
                 }
@@ -626,6 +593,38 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                       if (waitForGiftImg) {
                         waitForGiftImg.onload = () => {
                           resultContent.innerHTML = tempContainer.innerHTML;
+                          // --- Конфетти для Stripchat и Chaturbate ---
+                          const confettiCanvas = document.createElement("canvas");
+                          confettiCanvas.style.position = "fixed";
+                          confettiCanvas.style.top = 0;
+                          confettiCanvas.style.left = 0;
+                          confettiCanvas.style.width = "100vw";
+                          confettiCanvas.style.height = "100vh";
+                          confettiCanvas.style.pointerEvents = "none";
+                          confettiCanvas.style.zIndex = 99999;
+                          document.body.appendChild(confettiCanvas);
+
+                          const script = document.createElement("script");
+                          script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+                          script.onload = () => {
+                            const myConfetti = window.confetti.create(confettiCanvas, { resize: true });
+                            myConfetti({
+                              particleCount: 200,
+                              spread: 100,
+                              origin: { y: 0.6 },
+                              startVelocity: 30,
+                              gravity: 0.8,
+                              ticks: 200
+                            });
+
+                            setTimeout(() => {
+                              confettiCanvas.style.pointerEvents = "none";
+                              confettiCanvas.style.display = "none";
+                              confettiCanvas.remove();
+                            }, 6000);
+                          };
+                          document.body.appendChild(script);
+                          // --- конец конфетти ---
                           document.getElementById("resultOverlay").style.display = "block";
                           resultFrame.style.display = "block";
                           resultFrame.style.background = "#1F2C29";
@@ -695,6 +694,38 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                       if (waitForGiftImg) {
                         waitForGiftImg.onload = () => {
                           resultContent.innerHTML = tempContainer.innerHTML;
+                          // --- Конфетти для Stripchat и Chaturbate ---
+                          const confettiCanvas = document.createElement("canvas");
+                          confettiCanvas.style.position = "fixed";
+                          confettiCanvas.style.top = 0;
+                          confettiCanvas.style.left = 0;
+                          confettiCanvas.style.width = "100vw";
+                          confettiCanvas.style.height = "100vh";
+                          confettiCanvas.style.pointerEvents = "none";
+                          confettiCanvas.style.zIndex = 99999;
+                          document.body.appendChild(confettiCanvas);
+
+                          const script = document.createElement("script");
+                          script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+                          script.onload = () => {
+                            const myConfetti = window.confetti.create(confettiCanvas, { resize: true });
+                            myConfetti({
+                              particleCount: 200,
+                              spread: 100,
+                              origin: { y: 0.6 },
+                              startVelocity: 30,
+                              gravity: 0.8,
+                              ticks: 200
+                            });
+
+                            setTimeout(() => {
+                              confettiCanvas.style.pointerEvents = "none";
+                              confettiCanvas.style.display = "none";
+                              confettiCanvas.remove();
+                            }, 6000);
+                          };
+                          document.body.appendChild(script);
+                          // --- конец конфетти ---
                           document.getElementById("resultOverlay").style.display = "block";
                           resultFrame.style.display = "block";
                           resultFrame.style.background = "#1F2C29";

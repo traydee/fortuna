@@ -580,7 +580,7 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                       <div style="font-family: 'Ubuntu', sans-serif; font-size: 15px; font-weight: bold; color: white; margin-bottom: 6px;">Сделайте скриншот приза</div>
                       <div style="font-family: 'Ubuntu', sans-serif; font-size: 12px; color: #ccc;">Для получения приза, сделайте скриншот и отправьте менеджеру, нажав на кнопку внизу</div>
                     </div>
-                    <button style="width: 100%; background: #96D52B; border: none; padding: 12px; color: #1F2C29; font-weight: bold; border-radius: 8px; margin-top: 12px; cursor: pointer; font-family: 'Ubuntu', sans-serif; font-size: 16px;">Забрать приз</button>
+                    <button onclick="openPrizeChat()" style="width: 100%; background: #96D52B; border: none; padding: 12px; color: #1F2C29; font-weight: bold; border-radius: 8px; margin-top: 12px; cursor: pointer; font-family: 'Ubuntu', sans-serif; font-size: 16px;">Забрать приз</button>
                   `;
                   fetch("images_pr.json")
                     .then(res => res.json())
@@ -681,7 +681,7 @@ document.getElementById("spinBtn").addEventListener("click", () => {
                       <div style="font-family: 'Ubuntu', sans-serif; font-size: 15px; font-weight: bold; color: white; margin-bottom: 6px;">Сделайте скриншот приза</div>
                       <div style="font-family: 'Ubuntu', sans-serif; font-size: 12px; color: #ccc;">Для получения приза, сделайте скриншот и отправьте менеджеру, нажав на кнопку внизу</div>
                     </div>
-                    <button style="width: 100%; background: #96D52B; border: none; padding: 12px; color: #1F2C29; font-weight: bold; border-radius: 8px; margin-top: 12px; cursor: pointer; font-family: 'Ubuntu', sans-serif; font-size: 16px;">Забрать приз</button>
+                    <button onclick="openPrizeChat()" style="width: 100%; background: #96D52B; border: none; padding: 12px; color: #1F2C29; font-weight: bold; border-radius: 8px; margin-top: 12px; cursor: pointer; font-family: 'Ubuntu', sans-serif; font-size: 16px;">Забрать приз</button>
                   `;
                   fetch("images_pr.json")
                     .then(res => res.json())
@@ -1047,25 +1047,28 @@ document.getElementById("spinBtn").addEventListener("click", () => {
     // --- open Telegram share for main invite button ---
     document.getElementById("inviteBtnMain").addEventListener("click", function (e) {
       e.preventDefault();
-      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
       const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
-      const text = encodeURIComponent(`Я дарю тебе печенье с предсказанием! ${link}`);
+      const text = encodeURIComponent(`Привет! Заходи в колесо-вебкама и получай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки! ${link}`);
       window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${text}`);
     });
 
     document.getElementById("inviteBtnModal").addEventListener("click", function (e) {
       e.preventDefault();
-      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
       const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
-      const text = encodeURIComponent(`Я дарю тебе печенье с предсказанием! ${link}`);
+      const text = encodeURIComponent(`Привет! Заходи в колесо-вебкама и получай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки! ${link}`);
       window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${text}`);
     });
 
     document.getElementById("inviteBtnModalStart").addEventListener("click", function (e) {
       e.preventDefault();
-      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
       const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
-      const text = encodeURIComponent(`Я дарю тебе печенье с предсказанием! ${link}`);
+      const text = encodeURIComponent(`Привет! Заходи в колесо-вебкама и получай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки! ${link}`);
       window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${text}`);
     });
 
@@ -1077,6 +1080,14 @@ document.getElementById("spinBtn").addEventListener("click", () => {
       setTimeout(() => {
         toast.style.display = "none";
       }, 5000);
+    }
+        // --- Функция для открытия Telegram чата и вставки текста для получения приза ---
+    function openPrizeChat() {
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      if (!tgUser || !tgUser.id) return;
+
+      const text = encodeURIComponent("Вам доступно новое вращение колеса! 🥳 Заходи, вращай и выигрывай бесплатное продвижение на на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки!");
+      window.Telegram.WebApp.openTelegramLink(`https://t.me/tray_dee?text=${text}`);
     }
     // --- Spin button animation: spinAndPulse ---
     // Анимация запускается через добавление/удаление класса .spin-active в обработчике клика выше.
@@ -1105,4 +1116,5 @@ document.getElementById("spinBtn").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 

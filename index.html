@@ -860,7 +860,8 @@ document.getElementById("spinBtn").addEventListener("click", () => {
     // --- Функция для открытия Telegram чата и вставки текста для получения приза ---
     function openPrizeChat() {
       const text = encodeURIComponent("Вам доступно новое вращение колеса! 🥳 Заходи, вращай и выигрывай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки!");
-      window.Telegram.WebApp.openTelegramLink(`https://t.me/rollcammm?text=${text}`);
+      const url = "https://t.me/rollcammm";
+      window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${url}&text=${text}`);
     }
 
   // NOTE: closeResult event is now attached dynamically after resultContent.innerHTML is set.

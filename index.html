@@ -1062,11 +1062,10 @@ document.getElementById("spinBtn").addEventListener("click", () => {
     // --- open Telegram share for main invite button ---
     document.getElementById("inviteBtnMain").addEventListener("click", function (e) {
       e.preventDefault();
-      // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
       const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
       const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
       const text = encodeURIComponent(`Привет! Заходи в колесо-вебкама и получай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки! ${link}`);
-      window.Telegram.WebApp.openTelegramLink(`https://t.me/share/text?text=${encodeURIComponent("Вам доступно новое вращение колеса! 🥳 Заходи, вращай и выигрывай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки!")}`);
+      window.Telegram.WebApp.openTelegramLink(`tg://msg?text=${text}`);
     });
 
     document.getElementById("inviteBtnModal").addEventListener("click", function (e) {

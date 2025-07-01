@@ -1064,31 +1064,30 @@ document.getElementById("spinBtn").addEventListener("click", () => {
       e.preventDefault();
       const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
       if (!tgUser || !tgUser.id) return;
-
       const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
       const comment = `Привет! Заходи в колесо-вебкама и получай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели!`;
-
-      // Используем t.me/share/url
       const shareLink = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(comment)}`;
       window.Telegram.WebApp.openTelegramLink(shareLink);
     });
 
     document.getElementById("inviteBtnModal").addEventListener("click", function (e) {
       e.preventDefault();
-      // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
       const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      if (!tgUser || !tgUser.id) return;
       const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
-      const text = encodeURIComponent(`Привет! Заходи в колесо-вебкама и получай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки! ${link}`);
-      window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${text}`);
+      const comment = `Привет! Заходи в колесо-вебкама и получай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели!`;
+      const shareLink = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(comment)}`;
+      window.Telegram.WebApp.openTelegramLink(shareLink);
     });
 
     document.getElementById("inviteBtnModalStart").addEventListener("click", function (e) {
       e.preventDefault();
-      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user || { id: "123456789" };
-      // const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      if (!tgUser || !tgUser.id) return;
       const link = `https://t.me/rollcam_bot?start=${tgUser.id}`;
-      const text = encodeURIComponent(`Привет! Заходи в колесо-вебкама и получай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели по выходу на высокие чеки! ${link}`);
-      window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${text}`);
+      const comment = `Привет! Заходи в колесо-вебкама и получай бесплатное продвижение на Stripchat и Chaturbate, бесплатные лайки Chaturbate и курс от ТОП модели!`;
+      const shareLink = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(comment)}`;
+      window.Telegram.WebApp.openTelegramLink(shareLink);
     });
 
     // showToast function (if not exists)
